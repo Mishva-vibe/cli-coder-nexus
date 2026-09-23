@@ -305,9 +305,17 @@ npm run test:watch
 
 ---
 
+## Project status
+
+> ⚠️ **Work in progress** — the product is not fully production-ready yet. Known rough edges are tracked in [Issues](https://github.com/roarwing8/cli-coder-nexus/issues). Found a bug? Please [open an issue](https://github.com/roarwing8/cli-coder-nexus/issues/new/choose) — or jump in and fix it with us.
+
 ## Contributing
 
-Issues and pull requests are welcome! Fork the repo, create a feature branch, and open a PR against `main`.
+Issues and pull requests are welcome — especially while we're hardening the product. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, guidelines, and where to help.
+
+- 🐛 [Report a bug](https://github.com/roarwing8/cli-coder-nexus/issues/new?template=bug_report.md)
+- 💡 [Request a feature](https://github.com/roarwing8/cli-coder-nexus/issues/new?template=feature_request.md)
+- 🙌 Browse [`help wanted`](https://github.com/roarwing8/cli-coder-nexus/issues?q=label%3A%22help+wanted%22) issues
 
 ## License
 
