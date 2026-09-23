@@ -167,13 +167,11 @@
   <!-- Sidebar -->
   <aside id="sidebar">
     <div class="sidebar-head">
-      <input type="text" id="agentSearch" placeholder="Search agents..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:2px 6px;font-size:11px;color:var(--fg);font-family:var(--fm);outline:none;" oninput="filterAgentList(agents, this.value); renderAgentCards();" />
+      <input id="agent-search-input" type="text" placeholder="Search agents… (Ctrl+F)" autocomplete="off" style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:2px 6px;font-size:11px;color:var(--fg);font-family:var(--fm);outline:none;"/>
     </div>
+    <div class="sidebar-meta" style="display:flex;align-items:center;gap:8px;padding:4px 8px;font-size:10px;color:var(--muted);">
       <span>Agent Roster</span>
-      <span id="agentCount" class="count">0/0 available</span>
-    </div>
-    <div class="search-wrap">
-      <input id="agent-search-input" type="text" placeholder="Filter agents… (Ctrl+F)" autocomplete="off"/>
+      <span id="agentCount" class="count" style="margin-left:auto;">0/0 available</span>
     </div>
     <div id="agentList" class="agent-list"></div>
   </aside>
@@ -344,6 +342,29 @@
     </div>
   </div>
 
+  <!-- Sign-in confirmation (Issue #1) -->
+  <div id="signInModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Sign-in required?</span>
+        <button class="btn btn-sm" onclick="cancelSignIn()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;line-height:1.5;margin:0 0 8px;">
+          <strong id="signInAgentName">This CLI</strong> is tagged as needing an account or API key.
+        </p>
+        <p style="font-size:11px;color:var(--muted);margin:0;">
+          When it starts, look for a login prompt or paste an API key in the terminal pane.
+          There is no separate login window — authentication happens inside the CLI itself.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="cancelSignIn()">Cancel</button>
+        <button class="btn-primary" onclick="confirmSignIn()">Launch &amp; Sign In</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Custom Agent Modal -->
   <div id="modal" class="modal hidden">
     <div class="modal-content">
@@ -383,6 +404,8 @@
     const collapsedGroups=new Set();
     /* Agents we already warned about needing a sign-in / API key. */
     const warnedKeyAgents=new Set();
+    /* Pending agent id waiting for sign-in confirmation (Issue #1). */
+    let pendingSignInAgentId=null;
     let fontsReady=false;
     /* One shared UTF-8 decoder for all binary PTY frames. NOTE: TextDecoder's
        first argument is the encoding *label* - passing an options object there
@@ -498,6 +521,13 @@
           }
           showNotification(`${msg.agentId} stopped`,"error"); break;
         case "custom_agent_added": agents.push(msg.agent); renderAgentCards(); closeModal("modal"); showNotification("Custom agent added","success"); break;
+        case "custom_agent_removed":
+          agents=agents.filter(a=>a.id!==msg.agentId);
+          delete sessionStatuses[msg.agentId];
+          for(let i=splitSlots.length-1;i>=0;i--){ if(splitSlots[i].agentId===msg.agentId) removeSlot(i); }
+          renderAgentCards();
+          showNotification(`Removed custom agent ${msg.agentId}`,"success");
+          break;
         case "custom_agent_error":
           const errEl=document.getElementById("customError");
           if(errEl){ errEl.textContent=msg.message; errEl.classList.remove("hidden"); }
@@ -549,13 +579,14 @@
           else if(st==="BUSY"||st==="CONNECTED") dotClass="busy";
           const onOff=a.active&&dotClass!=="offline";
           const dot=`<div class="status-dot ${onOff?dotClass:'offline'}" style="${onOff?`box-shadow:0 0 6px ${a.tagColor};`:''}" title="${st}"></div>`;
+          const delBtn=a.tag==="CUSTOM"?`<button class="pane-btn" title="Delete custom agent" onclick="event.stopPropagation();deleteCustomAgent('${a.id}')" style="margin-left:4px;">✕</button>`:"";
           html+=`<div class="agent-card ${isActive?'active':''}" data-agent-id="${a.id}" style="--accent:${a.tagColor};" onclick="selectAgent('${a.id}')" ondblclick="openConfigModal('${a.id}')">
             <div style="display:flex;align-items:center;gap:5px;min-width:0;flex:1">
               ${dot}<span class="agent-name" style="color:${a.tagColor}">${esc(a.name)}</span>
               <span class="tag-badge" style="background:${a.tagColor}18;color:${a.tagColor};border-color:${a.tagColor}30;">${esc(a.tag)}</span>
               <span class="agent-binary">${esc(a.binary)}</span>
-              ${cc>0?`<span class="crash-count">✗${cc}</span>`:''}
-            </div>${pid?`<span style="font-size:9px;color:var(--muted)">PID ${pid}</span>`:''}</div>`;
+              ${cc>0?`<span class="crash-count">✗${cc}</span>`:""}
+            </div>${pid?`<span style="font-size:9px;color:var(--muted)">PID ${pid}</span>`:""}${delBtn}</div>`;
         }
       }
       container.innerHTML=html;
@@ -574,32 +605,8 @@
       );
     }
 
-    /* Keyboard Shortcuts */
-    document.addEventListener('keydown', (e) => {
-      // Ctrl/Cmd + K: Focus search
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.getElementById('agentSearch');
-        if (searchInput) searchInput.focus();
-      }
-      // Ctrl/Cmd + R: Rescan
-      if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-        e.preventDefault();
-        rescan();
-      }
-      // Escape: Clear search
-      if (e.key === 'Escape') {
-        const searchInput = document.getElementById('agentSearch');
-        if (searchInput && document.activeElement === searchInput) {
-          searchInput.value = '';
-          renderAgentCards();
-        }
-      }
-    });
+    /* ── Keyboard Shortcuts (single handler — see bottom of file) ──── */
 
-    /* Terminal Management */
-
-    /* ── Terminal Management ──────────────────────────────────────── */
     function selectAgent(agentId){
       const agent=agents.find(a=>a.id===agentId);
       if(!agent) return;
@@ -608,8 +615,11 @@
         return;
       }
       if(agent.requiresKey&&!warnedKeyAgents.has(agentId)){
-        warnedKeyAgents.add(agentId);
-        showNotification(`${agent.name} is not a zero-cost CLI - it may ask you to sign in or paste an API key.`,"info");
+        pendingSignInAgentId=agentId;
+        const nameEl=document.getElementById("signInAgentName");
+        if(nameEl) nameEl.textContent=`${agent.name} (${agent.binary})`;
+        openModal("signInModal");
+        return;
       }
       const slot=ensureSlot(agentId,agent);
       if(!slot) return;
@@ -620,6 +630,23 @@
         try{ slot.fitAddon.fit(); }catch{}
         try{ slot.term.focus(); }catch{}
       }
+    }
+
+    function confirmSignIn(){
+      if(pendingSignInAgentId){
+        warnedKeyAgents.add(pendingSignInAgentId);
+        const id=pendingSignInAgentId;
+        pendingSignInAgentId=null;
+        closeModal("signInModal");
+        selectAgent(id);
+      } else {
+        closeModal("signInModal");
+      }
+    }
+
+    function cancelSignIn(){
+      pendingSignInAgentId=null;
+      closeModal("signInModal");
     }
 
     function ensureSlot(agentId,agent){
@@ -863,7 +890,7 @@
         if(e.key==="h"){ e.preventDefault(); contextHandoff(); return; }
         if(e.key==="r"){ e.preventDefault(); rescan(); return; }
       }
-      if(e.key==="Escape"){ closeModal("cmdPalette"); closeModal("searchBar"); closeModal("modal"); closeModal("workspaceModal"); closeModal("configModal"); closeModal("aboutModal"); document.getElementById("sidebarOverlay")?.classList.add("hidden"); return; }
+      if(e.key==="Escape"){ closeModal("cmdPalette"); closeModal("searchBar"); closeModal("modal"); closeModal("workspaceModal"); closeModal("configModal"); closeModal("aboutModal"); closeModal("signInModal"); pendingSignInAgentId=null; document.getElementById("sidebarOverlay")?.classList.add("hidden"); return; }
     });
 
     /* ── Custom Agent ─────────────────────────────────────────────── */
@@ -873,6 +900,14 @@
       const args=argsStr?argsStr.split(/\s+/).filter(Boolean):[]; const group=document.getElementById("customGroup").value||"Custom";
       if(!id||!name||!binary){ showNotification("ID, name, and binary are required","error"); return; }
       send({type:"add_custom_agent",agentId:id,name:name,binary:binary,args:args,group:group});
+    }
+
+    function deleteCustomAgent(id){
+      const agent=agents.find(a=>a.id===id);
+      if(!agent||agent.tag!=="CUSTOM") return;
+      if(!confirm(`Delete custom agent "${agent.name}" (${agent.binary})?`)) return;
+      send({type:"delete_custom_agent",agentId:id});
+      fetch(`/api/agents/custom/${encodeURIComponent(id)}`,{method:"DELETE"}).catch(()=>{});
     }
 
     /* ── Commands ─────────────────────────────────────────────────── */

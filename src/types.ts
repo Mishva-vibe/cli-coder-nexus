@@ -46,6 +46,7 @@ export interface ClientMessage {
     | "restart_session"
     | "rescan"
     | "add_custom_agent"
+    | "delete_custom_agent"
     | "context_handoff"
     | "save_agent_config"
     | "get_agent_config"
@@ -93,7 +94,7 @@ export const DEFAULT_GROUPS: Record<string, string> = {
   sgpt: "Needs Account",
   llm: "Needs Account",
   mods: "Needs Account",
-  omniroute: "Needs Account",
+  omniroute: "Zero-Cost",
 };
 
 /* -- Default agent roster --------------------------------------------------

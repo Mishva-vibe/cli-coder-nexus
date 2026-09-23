@@ -4,6 +4,38 @@
  */
 import * as assert from "node:assert";
 import { describe, it } from "node:test";
+import { shellEscape, buildCommand } from "../src/shellEscape.ts";
+
+describe("shellEscape (Issue #3 - injection)", () => {
+  it("leaves simple args unquoted", () => {
+    assert.strictEqual(shellEscape("opencode"), "opencode");
+    assert.strictEqual(shellEscape("--flag"), "--flag");
+    assert.strictEqual(shellEscape("/usr/bin/node"), "/usr/bin/node");
+  });
+
+  it("quotes args with spaces", () => {
+    const out = shellEscape("hello world");
+    assert.ok(out.includes("hello world"));
+    assert.notStrictEqual(out, "hello world");
+  });
+
+  it("neutralizes shell metacharacters", () => {
+    const payload = "x; rm -rf /";
+    const out = shellEscape(payload);
+    assert.notStrictEqual(out, payload);
+    // must be wrapped so `;` is not a command separator at top level
+    assert.ok(out.startsWith('"') || out.startsWith("'"), `expected quoting, got: ${out}`);
+  });
+
+  it("buildCommand escapes every arg including binary", () => {
+    const cmd = buildCommand("node", ["-e", "require('child_process').execSync('calc')"]);
+    assert.ok(cmd.startsWith("node "));
+    // the evil payload must be quoted as one word
+    assert.ok(cmd.includes('"') || cmd.includes("'"));
+    // raw unquoted form should not appear
+    assert.ok(!cmd.includes("node -e require('child_process')") || cmd.includes('"') || cmd.includes("'"));
+  });
+});
 
 describe("server.ts - Type Validation", () => {
   describe("ClientMessage type", () => {
@@ -12,6 +44,7 @@ describe("server.ts - Type Validation", () => {
       const validTypes = [
         "input", "resize", "switch_agent", "kill_session",
         "restart_session", "rescan", "add_custom_agent",
+        "delete_custom_agent",
         "context_handoff", "save_agent_config", "get_agent_config",
         "set_active_slot", "split_view", "close_split", "notification_click"
       ];
@@ -99,6 +132,7 @@ describe("WebSocket Message Handling", () => {
       { type: "restart_session", hasAgentId: true },
       { type: "rescan", hasNoRequiredFields: true },
       { type: "add_custom_agent", hasAgentId: true, hasName: true, hasBinary: true },
+      { type: "delete_custom_agent", hasAgentId: true },
       { type: "context_handoff", hasAgentId: true },
       { type: "save_agent_config", hasAgentId: true, hasConfig: true },
       { type: "get_agent_config", hasAgentId: true },

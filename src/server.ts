@@ -5,7 +5,7 @@ import { platform, homedir } from "node:os";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
-import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, unlinkSync } from "node:fs";
 import { execFile, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import cors from "cors";
@@ -13,6 +13,7 @@ import pty from "node-pty";
 
 import { scanAgents, validateCustomBinary, buildCustomAgent } from "./scanner.js";
 import { triggerContextHandoff } from "./gitHelper.js";
+import { buildCommand } from "./shellEscape.js";
 import {
   type AgentDefinition,
   type SessionRecord,
@@ -28,6 +29,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PORT = parseInt(process.env.PORT || "3777", 10);
+// Bind to localhost by default so LAN peers cannot hit unauthenticated
+// mutating endpoints (/api/shutdown, /api/workspace, custom agents).
+// Opt into LAN with HOST=0.0.0.0 (Issue #3).
+const HOST = process.env.HOST || "127.0.0.1";
 // Where the local CLIs run by default (overridable via TARGET_DIR / the UI).
 let workspaceDir = process.env.TARGET_DIR || process.cwd();
 const isWindows = platform() === "win32";
@@ -225,17 +230,11 @@ function sendTo(ws: WebSocket, msg: any) {
 
 // Binary data goes directly (can't batch binary frames easily)
 function broadcastBinary(data: string, agentId: string) {
-  const agentBuf = Buffer.from(agentId, "utf-8");
-  if (agentBuf.length > 255) {
+  const frame = buildBinaryFrame(data, agentId);
+  if (!frame) {
     broadcast({ type: "terminal_data", agentId, data });
     return;
   }
-  const dataBuf = Buffer.from(data, "utf-8");
-  const header = Buffer.alloc(1 + agentBuf.length);
-  header.writeUInt8(agentBuf.length, 0);
-  agentBuf.copy(header, 1);
-  const frame = Buffer.concat([header, dataBuf]);
-  
   // Send binary directly to all clients
   for (const client of wsClients) {
     if (client.readyState === WebSocket.OPEN) {
@@ -244,6 +243,29 @@ function broadcastBinary(data: string, agentId: string) {
       } catch {}
     }
   }
+}
+
+/* Build the [agentIdLen][agentId][utf8 bytes] frame, or null if id > 255. */
+function buildBinaryFrame(data: string, agentId: string): Buffer | null {
+  const agentBuf = Buffer.from(agentId, "utf-8");
+  if (agentBuf.length > 255) return null;
+  const dataBuf = Buffer.from(data, "utf-8");
+  const header = Buffer.alloc(1 + agentBuf.length);
+  header.writeUInt8(agentBuf.length, 0);
+  agentBuf.copy(header, 1);
+  return Buffer.concat([header, dataBuf]);
+}
+
+/* Unicast binary frame to one client only (scrollback replay on switch_agent
+   must not leak into other connected tabs — Issue #7). */
+function sendBinaryTo(ws: WebSocket, data: string, agentId: string) {
+  if (ws.readyState !== WebSocket.OPEN) return;
+  const frame = buildBinaryFrame(data, agentId);
+  if (!frame) {
+    try { ws.send(JSON.stringify({ type: "terminal_data", agentId, data })); } catch {}
+    return;
+  }
+  try { ws.send(frame, { binary: true }); } catch {}
 }
 
 // ── PTY Spawn ────────────────────────────────────────────────────
@@ -264,7 +286,7 @@ function spawnSession(agent: AgentDefinition): SessionRecord {
   const args = cfg?.args?.length ? cfg.args : agent.args;
   const env = cfg?.env || {};
   const cwd = cfg?.cwd || workspaceDir;
-  const fullCmd = [agent.binary, ...args].join(" ");
+  const fullCmd = buildCommand(agent.binary, args);
 
   const { shell, args: shellArgs } = getShell();
   const finalShellArgs = [...shellArgs, fullCmd];
@@ -600,6 +622,20 @@ app.post("/api/agents/custom", async (req, res) => {
   res.json({ agent });
 });
 
+// Delete a custom agent (Issue #2) — removes from memory, disk config, and per-agent settings.
+app.delete("/api/agents/custom/:agentId", (req, res) => {
+  const id = req.params.agentId;
+  const idx = agents.findIndex((a) => a.id === id && a.tag === "CUSTOM");
+  if (idx === -1) return res.status(404).json({ error: `"${id}" not found or not a custom agent` });
+  killSession(id);
+  agents.splice(idx, 1);
+  delete agentConfigs[id];
+  try { unlinkSync(join(CONFIG_DIR, `${id}.json`)); } catch {}
+  saveCustomAgents();
+  broadcast({ type: "custom_agent_removed", agentId: id });
+  res.json({ ok: true, agentId: id });
+});
+
 app.post("/api/workspace", (req, res) => {
   const { dir } = req.body;
   if (!dir) return res.status(400).json({ error: "dir required" });
@@ -675,11 +711,10 @@ wss.on("connection", (ws) => {
           session = spawned;
           ws.send(JSON.stringify({ type: "session_status", agentId: msg.agentId, status: "STARTING", pid: session.pty.pid }));
         }
-        // Send scrollback buffer to client for replay
+        // Send scrollback buffer to client for replay — only to the requester
         const buffer = session.scrollbackBuffer.join("\n");
         if (buffer) {
-          // Use binary transport for scrollback too
-          broadcastBinary(buffer + "\n", msg.agentId);
+          sendBinaryTo(ws, buffer + "\n", msg.agentId);
         }
         ws.send(JSON.stringify({ type: "session_status", agentId: msg.agentId, status: "READY", pid: session.pty.pid }));
         break;
@@ -721,6 +756,18 @@ wss.on("connection", (ws) => {
         agents.push(a);
         saveCustomAgents();
         broadcast({ type: "custom_agent_added", agent: a });
+        break;
+      }
+      case "delete_custom_agent": {
+        if (!msg.agentId) break;
+        const di = agents.findIndex((a) => a.id === msg.agentId && a.tag === "CUSTOM");
+        if (di === -1) { ws.send(JSON.stringify({ type: "custom_agent_error", message: `"${msg.agentId}" not found or not custom` })); break; }
+        killSession(msg.agentId);
+        agents.splice(di, 1);
+        delete agentConfigs[msg.agentId];
+        try { unlinkSync(join(CONFIG_DIR, `${msg.agentId}.json`)); } catch {}
+        saveCustomAgents();
+        broadcast({ type: "custom_agent_removed", agentId: msg.agentId });
         break;
       }
       case "context_handoff": {
@@ -797,11 +844,12 @@ process.on("SIGINT", shutdown);
 // ── Start ────────────────────────────────────────────────────────
 
 init().then(() => {
-  server.listen(PORT, "0.0.0.0", () => {
+  server.listen(PORT, HOST, () => {
   console.log("");
   console.log("  ╔═══════════════════════════════════════════════╗");
   console.log("  ║   APEX // Coder Hub by Blackjack  v1.0.4   ║");
   console.log(`  ║   Port: ${String(PORT).padEnd(38)}║`);
+  console.log(`  ║   Host: ${HOST.padEnd(38)}║`);
   console.log(`  ║   Workspace: ${workspaceDir.slice(0, 32).padEnd(32)}║`);
   console.log("  ╚═══════════════════════════════════════════════╝");
   console.log("");

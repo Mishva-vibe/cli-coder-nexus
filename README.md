@@ -192,6 +192,7 @@ Double-click an agent card to open its settings:
 | `GET` | `/api/about` | Server info (version, platform, stats) |
 | `POST` | `/api/agents/rescan` | Re-scan for available binaries |
 | `POST` | `/api/agents/custom` | Register a custom agent |
+| `DELETE` | `/api/agents/custom/:id` | Remove a custom agent |
 | `POST` | `/api/workspace` | Change workspace directory |
 | `POST` | `/api/shutdown` | Graceful server shutdown |
 
@@ -207,6 +208,7 @@ Double-click an agent card to open its settings:
 - `restart_session` - Restart agent process
 - `rescan` - Trigger agent re-scan
 - `add_custom_agent` - Register new custom agent
+- `delete_custom_agent` - Remove a custom agent
 - `context_handoff` - Generate and send context report
 - `save_agent_config` / `get_agent_config` - Persist config
 
@@ -241,6 +243,7 @@ term.write(textData);
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3777` | Server listen port |
+| `HOST` | `127.0.0.1` | Bind address. Use `0.0.0.0` only if you intentionally want LAN access |
 | `TARGET_DIR` | `process.cwd()` | Default workspace directory |
 
 ---
@@ -295,8 +298,9 @@ Run the built-in test suite:
 npm test
 ```
 
-16 tests cover scanner logic (PATH scanning, binary validation, agent
-definitions) and server logic (message types, rate-limit patterns).
+16+ tests cover scanner logic (PATH scanning, binary validation, agent
+definitions), server logic (message types, rate-limit patterns), and shell
+argument escaping (injection defense).
 
 ```bash
 # Watch mode
