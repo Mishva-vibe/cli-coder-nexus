@@ -4,6 +4,9 @@
   "description": "Multi-Agent Local Terminal Hub for CLI coding assistants",
   "type": "module",
   "main": "dist/server.js",
+  "engines": {
+    "node": ">=22.6.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/server.ts",
