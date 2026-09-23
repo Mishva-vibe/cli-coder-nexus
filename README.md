@@ -20,6 +20,20 @@ APEX is a commercial-grade developer orchestrator that provides a unified dashbo
 **No API keys required.** The default roster is limited to free, zero-setup CLIs
 (opencode, freebuff, openclaude) - nothing in the dashboard ever prompts for a key.
 
+## Screenshots
+
+**Single agent — OpenCode TUI**
+
+![Single agent view](docs/screenshot-single.png)
+
+**Split view — OpenCode + Freebuff side-by-side**
+
+![Split view](docs/screenshot-split.png)
+
+**Command palette (Ctrl+K)**
+
+![Command palette](docs/screenshot-palette.png)
+
 ---
 
 ## Features
