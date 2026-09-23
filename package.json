@@ -1,0 +1,28 @@
+{
+  "name": "cli-coder-nexus",
+  "version": "1.0.0",
+  "description": "Multi-Agent Local Terminal Hub for CLI coding assistants",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/server.ts",
+    "start": "node dist/server.js",
+    "test": "node --test tests/*.test.ts",
+    "test:watch": "node --test tests/*.test.ts --watch"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "node-pty": "^1.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.0",
+    "@types/ws": "^8.5.12",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

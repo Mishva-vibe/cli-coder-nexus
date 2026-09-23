@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-secondary-fixed-variant": "#004e5c", "outline-variant": "#494454", "tertiary-fixed": "#6ffbbe", "surface-container-low": "#191b23", "secondary-fixed": "#acedff", "accent-amber": "#f59e0b", "canvas-base": "#0a0d14", "background": "#10131a", "surface-container-high": "#272a32", "surface-slate": "#0f172a", "tertiary-fixed-dim": "#4edea3", "error-container": "#93000a", "inverse-primary": "#6d3bd7", "inverse-surface": "#e1e2ec", "surface-container": "#1d1f27", "accent-rose": "#ef4444", "tertiary-container": "#00a572", "on-error": "#690005", "on-surface": "#e1e2ec", "surface-variant": "#32353d", "on-primary-container": "#340080", "terminal-emerald": "#10b981", "on-primary": "#3c0091", "surface": "#10131a", "on-tertiary": "#003824", "on-tertiary-fixed": "#002113", "border-grid": "#1e293b", "on-primary-fixed-variant": "#5516be", "on-tertiary-container": "#00311f", "secondary-fixed-dim": "#4cd7f6", "surface-container-highest": "#32353d", "error": "#ffb4ab", "primary-fixed": "#e9ddff", "surface-tint": "#d0bcff", "on-surface-variant": "#cbc3d7", "on-tertiary-fixed-variant": "#005236", "secondary": "#4cd7f6", "on-background": "#e1e2ec", "on-secondary": "#003640", "on-error-container": "#ffdad6", "outline": "#958ea0", "on-primary-fixed": "#23005c", "telemetry-violet": "#8b5cf6", "inverse-on-surface": "#2d3038", "surface-container-lowest": "#0b0e15", "primary-container": "#a078ff", "surface-bright": "#363941", "secondary-container": "#03b5d3", "primary-fixed-dim": "#d0bcff", "primary": "#d0bcff", "surface-dim": "#10131a", "on-secondary-container": "#00424e", "border-grid-bright": "#334155", "tertiary": "#4edea3", "on-secondary-fixed": "#001f26", "terminal-cyan": "#06b6d4" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "gutter": "0.75rem", "space-xs": "0.25rem", "space-xl": "1.5rem", "margin": "1rem", "space-md": "0.75rem", "margin-mobile": "0.75rem", "gutter-mobile": "0.5rem", "space-lg": "1rem" }, "fontFamily": { "label-md": ["Space Mono"], "headline-lg": ["Space Grotesk"], "label-sm": ["Space Mono"], "headline-sm": ["Space Grotesk"], "body-md": ["Space Mono"], "headline-xl-mobile": ["Space Grotesk"], "label-xs": ["Space Mono"], "body-lg": ["Space Mono"], "body-sm": ["Space Mono"], "headline-xl": ["Space Grotesk"], "headline-md": ["Space Grotesk"] }, "fontSize": { "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "700" }], "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.1em", "fontWeight": "700" }], "headline-sm": ["15px", { "lineHeight": "22px", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-md": ["13px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-xl-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }], "label-xs": ["9px", { "lineHeight": "12px", "letterSpacing": "0.12em", "fontWeight": "700" }], "body-lg": ["14px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }], "body-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "400" }], "headline-xl": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["18px", { "lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "600" }] } } } };</script></head><body class="bg-canvas-base text-on-surface font-body-md text-body-md antialiased selection:bg-telemetry-violet selection:text-surface-container-lowest"><aside class="fixed left-0 top-16 bottom-7 w-72 bg-surface-slate/85 backdrop-blur-xl z-40 flex flex-col justify-between border-r border-border-grid"><div class="flex flex-col h-full"><div class="px-space-md py-space-sm border-b border-border-grid flex items-center justify-between bg-surface-container-lowest/60"><span class="font-label-xs text-label-xs uppercase tracking-widest text-outline">Agent Roster Deck</span><span class="font-label-xs text-label-xs text-terminal-emerald px-1.5 py-0.5 bg-terminal-emerald/10 border border-terminal-emerald/40">8 CONFIGURED</span></div><nav class="flex-1 px-space-xs py-space-sm space-y-1 overflow-y-auto" data-active-classes="bg-surface-container-high text-telemetry-violet border-l-2 border-telemetry-violet font-bold"><a aria-current="page" class="flex items-center justify-between px-space-sm py-2 transition-colors bg-surface-container-high text-telemetry-violet border-l-2 border-telemetry-violet font-bold" data-path="terminal-split-console" href="#"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-terminal-emerald"></span><span>Split Console</span></div><span class="font-label-xs text-label-xs text-outline">CTRL+1</span></a><a class="flex items-center justify-between px-space-sm py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="agent-orchestration-deck" href="#"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-telemetry-violet"></span><span>Agent Registry</span></div><span class="font-label-xs text-label-xs text-outline">CTRL+2</span></a><a class="flex items-center justify-between px-space-sm py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="pty-session-inspector" href="#"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary"></span><span>PTY Sessions</span></div><span class="font-label-xs text-label-xs text-outline">CTRL+3</span></a><a class="flex items-center justify-between px-space-sm py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="context-handoff-graph" href="#"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-accent-amber"></span><span>Handoff Matrix</span></div><span class="font-label-xs text-label-xs text-outline">CTRL+4</span></a><a class="flex items-center justify-between px-space-sm py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="system-telemetry-logs" href="#"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-outline"></span><span>Telemetry Stream</span></div><span class="font-label-xs text-label-xs text-outline">CTRL+5</span></a><a class="flex items-center justify-between px-space-sm py-2 text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="cli-integration-builder" href="#"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-tertiary"></span><span>Custom Integrations</span></div><span class="font-label-xs text-label-xs text-outline">CTRL+6</span></a></nav><div class="p-space-sm border-t border-border-grid bg-surface-container-lowest/40"><div class="flex items-center justify-between font-label-xs text-label-xs text-outline"><span>SOCKET DAEMON</span><span class="text-terminal-emerald">LIVE 3777</span></div><div class="mt-1 text-on-surface-variant font-body-sm text-body-sm truncate">PID 20488: conpty-x64</div></div></div></aside><div class="pl-72"><header class="fixed top-0 left-0 right-0 h-16 bg-surface-slate/90 backdrop-blur-xl border-b border-border-grid z-50 flex items-center justify-between px-space-md"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs"><span class="font-headline-md text-headline-md tracking-tight font-bold text-on-surface">APEX</span><span class="font-headline-md text-headline-md text-telemetry-violet font-bold">//</span><span class="font-headline-sm text-headline-sm font-semibold text-secondary">Coder Hub</span><span class="ml-space-xs px-1.5 py-0.5 font-label-xs text-label-xs uppercase bg-surface-container-highest border border-border-grid-bright text-on-surface-variant">v1.0.4 • by Blackjack</span></div><div class="hidden xl:flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-lowest border border-border-grid font-body-sm text-body-sm"><span class="text-terminal-cyan">~/projects/apex-orchestrator</span><span class="flex items-center gap-1 px-1.5 py-0.2 bg-surface-container font-label-xs text-label-xs text-terminal-emerald border border-terminal-emerald/30"><span class="w-1.5 h-1.5 bg-terminal-emerald"></span>git:(main)</span></div></div><div class="hidden 2xl:flex items-center gap-space-md font-label-xs text-label-xs text-outline"><span class="text-on-surface-variant"><span class="text-telemetry-violet font-bold">8</span> Agents</span><span>•</span><span class="text-on-surface-variant"><span class="text-secondary font-bold">3</span> PTY Sessions</span><span>•</span><span class="text-on-surface-variant"><span class="text-terminal-emerald font-bold">0</span> Rate Limits</span></div><div class="flex items-center gap-space-xs"><button class="flex items-center gap-1.5 px-space-sm py-1.5 bg-telemetry-violet hover:bg-primary-container text-canvas-base hover:text-on-primary-container font-label-xs text-label-xs uppercase transition-colors" type="button"><span>📋 Context Handoff</span></button><button class="flex items-center gap-1.5 px-space-sm py-1.5 bg-surface-slate border border-border-grid-bright hover:bg-surface-container text-secondary font-label-xs text-label-xs uppercase transition-colors" type="button"><span>⚡ Rescan</span></button><button class="flex items-center gap-1.5 px-space-sm py-1.5 bg-surface-slate border border-border-grid-bright hover:bg-surface-container text-tertiary font-label-xs text-label-xs uppercase transition-colors" type="button"><span>+ Custom CLI</span></button><div class="ml-space-xs hidden md:flex items-center gap-1.5 px-2 py-1 bg-surface-container-lowest border border-terminal-emerald/40 font-label-xs text-label-xs text-terminal-emerald"><span class="w-2 h-2 bg-terminal-emerald animate-pulse"></span><span>WS:3777</span></div><div class="ml-space-xs w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 pb-7 w-full px-gutter min-h-screen bg-canvas-base"><div class="flex flex-col w-full">
+<!-- Sentinel Ambient Rate-Limit Banner -->
+<div class="w-full bg-surface-slate/90 backdrop-blur-md px-gutter py-space-xs flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-2 h-2 bg-terminal-emerald shadow-sm animate-pulse"></div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-terminal-emerald font-bold">Sentinel Engine Active</span>
+<span class="text-outline-variant font-label-xs text-label-xs">•</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">All 8 API gateways calibrated: Anthropic, Gemini-Pro, Local-Ollama online • 0 429 quota locks detected • Auto-rerouting armed</span>
+</div>
+<div class="hidden lg:flex items-center gap-space-md font-label-xs text-label-xs">
+<span class="text-on-surface-variant">WS PTY SYNC: <span class="text-terminal-cyan font-bold">0.42ms</span></span>
+<span class="px-1.5 py-0.5 bg-surface-container-high text-secondary font-bold">CONPTY-V2</span>
+</div>
+</div>
+<!-- Main Orchestration Surface: Split Dock & Terminal Viewports -->
+<div class="grid grid-cols-12 gap-gutter py-space-sm w-full">
+<!-- LEFT COLUMN: Agent Fleet Deck (3 of 12 cols) -->
+<aside class="col-span-12 xl:col-span-3 flex flex-col gap-space-xs bg-surface-container-lowest p-space-sm shadow-md">
+<!-- Fleet Header & Counts -->
+<div class="flex items-center justify-between pb-space-xs">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">AGENT FLEET</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.5 bg-surface-container text-telemetry-violet font-bold">6/8 READY</span>
+</div>
+<p class="font-label-xs text-label-xs text-outline tracking-wider uppercase mt-0.5">High-Concurrency Multi-PTY</p>
+</div>
+<button class="p-1 text-outline hover:text-terminal-cyan transition-colors" id="rescan-fleet-btn" title="Force Rescan">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+</button>
+</div>
+<!-- Agent Search Input -->
+<div class="relative w-full">
+<span class="absolute left-2 top-2 text-outline material-symbols-outlined text-[14px]">search</span>
+<input class="w-full bg-surface-slate text-on-surface pl-7 pr-space-sm py-1 font-body-sm text-body-sm placeholder:text-outline-variant focus:outline-none focus:bg-surface-container-high transition-colors" id="agent-search-input" placeholder="Filter agent or PID..." type="text"/>
+<span class="absolute right-2 top-1.5 font-label-xs text-label-xs text-outline-variant">^F</span>
+</div>
+<!-- Filter Chips -->
+<div class="flex items-center gap-1 py-1 overflow-x-auto text-nowrap">
+<button class="filter-chip px-2 py-0.5 bg-telemetry-violet text-canvas-base font-label-xs text-label-xs uppercase font-bold shadow-sm">ALL (8)</button>
+<button class="filter-chip px-2 py-0.5 bg-surface-container hover:bg-surface-container-high text-terminal-emerald font-label-xs text-label-xs uppercase font-bold transition-colors">RUNNING (3)</button>
+<button class="filter-chip px-2 py-0.5 bg-surface-container hover:bg-surface-container-high text-outline font-label-xs text-label-xs uppercase font-bold transition-colors">IDLE (3)</button>
+<button class="filter-chip px-2 py-0.5 bg-surface-container hover:bg-surface-container-high text-error font-label-xs text-label-xs uppercase font-bold transition-colors">OFF (2)</button>
+</div>
+<!-- Agent Cards Roster Deck -->
+<div class="flex flex-col gap-1.5 overflow-y-auto max-h-[calc(100vh-290px)] pr-0.5" id="agentList"></div>
+<!-- Agent Deck Footer / Actions -->
+<div class="mt-auto pt-space-xs flex flex-col gap-1.5 bg-surface-container-lowest">
+<div class="flex items-center justify-between text-outline-variant font-label-xs text-label-xs px-1">
+<span>⚡ DOUBLE-CLICK TO CONFIGURE</span>
+<span>ENTER TO ATTACH</span>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-2 bg-surface-container hover:bg-surface-container-high text-tertiary font-label-xs text-label-xs uppercase font-bold tracking-wider transition-colors shadow-sm" id="add-custom-agent-btn">
+<span class="material-symbols-outlined text-[16px]">add_box</span>
+<span>+ Add Custom CLI Agent</span>
+</button>
+</div>
+</aside>
+<!-- RIGHT COLUMN: Dual Split Terminal Workspace (9 of 12 cols) -->
+<section class="col-span-12 xl:col-span-9 flex flex-col gap-space-xs">
+<!-- Split Console Master Control Bar -->
+<div class="flex items-center justify-between bg-surface-slate px-space-md py-1.5 shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">DUAL TERMINAL CONSOLE</span>
+<span class="font-label-xs text-label-xs px-1.5 py-0.5 bg-telemetry-violet/20 text-telemetry-violet font-bold">2 PTY ATTACHED</span>
+</div>
+<span class="text-outline-variant font-label-xs text-label-xs">|</span>
+<div class="flex items-center gap-1 font-label-xs text-label-xs text-on-surface-variant">
+<span>SYNC BUFFER:</span>
+<span class="text-terminal-emerald font-bold">CIRCULAR 1024KB</span>
+</div>
+</div>
+<!-- Layout Controls & Mode Toggle -->
+<div class="flex items-center gap-1">
+<button class="px-2 py-1 bg-surface-container-high text-telemetry-violet font-label-xs text-label-xs font-bold shadow-sm" id="toggle-h-split" title="Horizontal Split">
+            ⬌ HORIZ
+          </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-outline font-label-xs text-label-xs font-bold transition-colors" id="toggle-v-split" title="Vertical Split">
+            ⬍ VERT
+          </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-outline font-label-xs text-label-xs font-bold transition-colors" id="toggle-maximize-split" title="Focus Active Pane">
+            ⛶ MAX
+          </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-outline hover:text-error font-label-xs text-label-xs font-bold transition-colors" id="master-clear-btn" title="Clear Buffers">
+            ✕ CLEAR
+          </button>
+</div>
+</div>
+<!-- Split Canvases Container (Dual Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-xs min-h-[580px] w-full" id="terminal-split-wrapper">
+<!-- PANE 1: OpenCode TUI (Active primary workspace) -->
+<div class="flex flex-col bg-canvas-base shadow-xl relative overflow-hidden">
+<!-- Pane 1 Header Strip -->
+<div class="flex items-center justify-between bg-surface-container-high px-space-sm py-1.5 select-none">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2 h-2 bg-accent-amber shadow-sm"></span>
+<span class="font-headline-sm text-headline-sm font-bold text-accent-amber truncate">OpenCode TUI</span>
+<span class="font-label-xs text-label-xs text-outline font-mono">PID:4892</span>
+<span class="hidden md:inline font-label-xs text-label-xs text-terminal-emerald">4ms</span>
+<span class="font-label-xs text-label-xs px-1 bg-surface-container-lowest text-on-surface-variant font-mono">342/500 L</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="handoff-trigger-btn px-2 py-0.5 bg-accent-amber hover:bg-accent-amber/90 text-canvas-base font-label-xs text-label-xs font-bold flex items-center gap-1 transition-colors shadow-sm">
+<span>📋 Send Handoff</span>
+</button>
+<div class="flex items-center bg-surface-container-lowest ml-1">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface font-label-xs text-label-xs" title="Split Left/Right">⬌</button>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface font-label-xs text-label-xs" title="Split Top/Bottom">⬍</button>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface font-label-xs text-label-xs" title="Maximize Pane">⛶</button>
+<button class="px-1.5 py-0.5 text-outline hover:text-error font-label-xs text-label-xs" title="Kill Process">✕</button>
+</div>
+</div>
+</div>
+<!-- Pane 1 Realistic Terminal xterm Canvas Output -->
+<div class="flex-1 p-space-sm font-body-sm text-body-sm text-on-surface overflow-y-auto leading-relaxed select-text font-mono bg-canvas-base">
+<div class="text-outline-variant font-label-xs text-label-xs mb-2">
+              ┌──[ conpty::xterm-256color // session: apex-pty-4892 ]────────────────────────────────────────────┐
+            </div>
+<!-- Terminal Header banner in ASCII -->
+<div class="text-accent-amber font-bold">
+              ░█████╗░██████╗░███████╗███╗░░██╗░█████╗░░█████╗░██████╗░███████╗<br/>
+              ██╔══██╗██╔══██╗██╔════╝████╗░██║██╔══██╗██╔══██╗██╔══██╗██╔════╝<br/>
+              ██║░░██║██████╔╝█████╗░░██╔██╗██║██║░░╚═╝██║░░██║██║░░██║█████╗░░<br/>
+              ██║░░██║██╔═══╝░██╔══╝░░██║╚████║██║░░██╗██║░░██║██║░░██║██╔══╝░░<br/>
+              ╚█████╔╝██║░░░░░███████╗██║░╚███║╚█████╔╝╚█████╔╝██████╔╝███████╗<br/>
+</div>
+<div class="text-outline font-label-xs text-label-xs mt-1 mb-2">v2.4.1 [node-pty bound] • Target Repo: ~/projects/apex-orchestrator</div>
+<!-- Terminal Run log: Git Tree Diff -->
+<div class="mt-2 text-terminal-cyan">❯ git status -s</div>
+<div class="text-terminal-emerald ml-2">M  pkg/orchestration/router.go</div>
+<div class="text-accent-amber ml-2">M  pkg/security/token_limiter.go</div>
+<div class="text-accent-rose ml-2">D  legacy/old_handoff_engine.ts</div>
+<div class="text-on-surface-variant ml-2">?? internal/telemetry/ws_broker.go</div>
+<!-- Syntax Highlighted Code Snippet inline -->
+<div class="mt-3 bg-surface-container-lowest p-2 shadow-inner">
+<div class="text-outline font-label-xs text-label-xs flex justify-between">
+<span>diff --git a/pkg/security/token_limiter.go b/pkg/security/token_limiter.go</span>
+<span class="text-terminal-emerald">+24 -8</span>
+</div>
+<div class="text-outline-variant mt-1">@@ -84,7 +84,15 @@ func (tl *TokenLimiter) Evaluate(req *SessionPayload) bool {</div>
+<div class="text-accent-rose">-    if tl.totalUsage &gt; tl.hardCap { return false }</div>
+<div class="text-terminal-emerald">+    // Sentinel Rate-Limit Guard with Sub-millisecond Fallback</div>
+<div class="text-terminal-emerald">+    if tl.LeakyBucket.Depleted() {</div>
+<div class="text-terminal-emerald">+        tl.Metrics.RecordThrottled(req.AgentID)</div>
+<div class="text-terminal-emerald">+        return tl.FallbackDispatch(req)</div>
+<div class="text-terminal-emerald">+    }</div>
+</div>
+<!-- Execution Result -->
+<div class="mt-3 text-terminal-cyan">❯ go test -v ./pkg/security/...</div>
+<div class="text-on-surface-variant ml-2">=== RUN   TestTokenLimiter_BurstExhaustion</div>
+<div class="text-terminal-emerald ml-2 font-bold">--- PASS: TestTokenLimiter_BurstExhaustion (0.18s)</div>
+<div class="text-on-surface-variant ml-2">=== RUN   TestRateLimitSentinel_HandoffTrip</div>
+<div class="text-terminal-emerald ml-2 font-bold">--- PASS: TestRateLimitSentinel_HandoffTrip (0.04s)</div>
+<div class="mt-1 text-terminal-emerald font-bold">✓ 18 tests passed in 1.4s [Coverage: 91.8%]</div>
+<!-- Active Interactive Prompt with Blinking Cursor -->
+<div class="mt-3 flex items-center text-accent-amber">
+<span class="font-bold">opencode</span>
+<span class="text-outline mx-1">::</span>
+<span class="text-secondary">main</span>
+<span class="text-on-surface mx-1">❯</span>
+<span class="text-on-surface">opencode refactor --scope=auth-controller --handoff</span>
+<span class="inline-block w-2 h-4 bg-accent-amber ml-1 animate-pulse"></span>
+</div>
+</div>
+</div>
+<!-- PANE 2: Claude Code (Secondary terminal / Context consumer) -->
+<div class="flex flex-col bg-canvas-base shadow-xl relative overflow-hidden">
+<!-- Pane 2 Header Strip -->
+<div class="flex items-center justify-between bg-surface-container-high px-space-sm py-1.5 select-none">
+<div class="flex items-center gap-2 min-w-0">
+<span class="w-2 h-2 bg-accent-rose shadow-sm"></span>
+<span class="font-headline-sm text-headline-sm font-bold text-accent-rose truncate">Claude Code</span>
+<span class="font-label-xs text-label-xs text-outline font-mono">PID:6014</span>
+<span class="hidden md:inline font-label-xs text-label-xs text-secondary">6ms</span>
+<span class="font-label-xs text-label-xs px-1 bg-surface-container-lowest text-on-surface-variant font-mono">188/500 L</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="handoff-receive-btn px-2 py-0.5 bg-surface-container hover:bg-surface-bright text-accent-rose font-label-xs text-label-xs font-bold flex items-center gap-1 transition-colors shadow-sm">
+<span>📥 Receive Handoff</span>
+</button>
+<div class="flex items-center bg-surface-container-lowest ml-1">
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface font-label-xs text-label-xs" title="Split Left/Right">⬌</button>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface font-label-xs text-label-xs" title="Split Top/Bottom">⬍</button>
+<button class="px-1.5 py-0.5 text-outline hover:text-on-surface font-label-xs text-label-xs" title="Maximize Pane">⛶</button>
+<button class="px-1.5 py-0.5 text-outline hover:text-error font-label-xs text-label-xs" title="Kill Process">✕</button>
+</div>
+</div>
+</div>
+<!-- Pane 2 Terminal Canvas Output -->
+<div class="flex-1 p-space-sm font-body-sm text-body-sm text-on-surface overflow-y-auto leading-relaxed select-text font-mono bg-canvas-base">
+<div class="text-outline-variant font-label-xs text-label-xs mb-2">
+              ┌──[ conpty::xterm-256color // session: claude-code-6014 ]─────────────────────────────────────────┐
+            </div>
+<div class="flex items-center gap-2 text-accent-rose font-bold">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span>CLAUDE CODE CLI // ANTHROPIC OFFICIAL RUNTIME</span>
+</div>
+<div class="text-outline font-label-xs text-label-xs">Active Model: claude-3.7-sonnet-20250219 • Temperature: 0.1 • Context: 16k/200k</div>
+<!-- Context Handoff Payload Arrival Alert -->
+<div class="mt-3 bg-surface-slate p-2 shadow-md">
+<div class="flex items-center justify-between text-telemetry-violet font-label-xs text-label-xs font-bold">
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-telemetry-violet"></span>
+                  CONTEXT HANDOFF INGESTED (.nexus_context.md)
+                </span>
+<span class="text-on-surface-variant font-mono">4,128 BYTES</span>
+</div>
+<div class="mt-1 text-on-surface-variant text-body-sm">
+                • Source: <span class="text-accent-amber font-bold">OpenCode TUI [PID:4892]</span><br/>
+                • Git diff status: <span class="text-terminal-emerald">clean staging (3 modified, 1 deleted)</span><br/>
+                • Intent: <span class="text-on-surface font-semibold">"Complete JWT expiration rotation and wire test coverage"</span>
+</div>
+</div>
+<!-- Claude AI Streamed Analytical Output -->
+<div class="mt-3 text-secondary">Claude &gt; Context analysis complete.</div>
+<p class="text-on-surface-variant mt-1">
+              I reviewed your changes to <code class="text-accent-amber">pkg/security/token_limiter.go</code>. The addition of the leaky-bucket guard prevents sudden cascading failover to the secondary agent.
+            </p>
+<p class="text-on-surface-variant mt-2">
+              Proposed Next Action:
+            </p>
+<div class="mt-1 bg-surface-container-lowest p-2 shadow-inner text-terminal-cyan">
+              1. Patch <span class="text-on-surface">internal/router.go</span> to bind the newly exposed FallbackDispatch listener.<br/>
+              2. Validate token refresh roundtrips against test vectors in <span class="text-on-surface">fixtures/auth_test.json</span>.<br/>
+              3. Run concurrency verification with 50 virtual agents.
+            </div>
+<div class="mt-3 text-outline font-label-xs text-label-xs">
+              Would you like me to execute this patch in-place? [Y/n/diff]
+            </div>
+<!-- Claude Interactive Prompt -->
+<div class="mt-2 flex items-center text-accent-rose">
+<span class="font-bold">claude</span>
+<span class="text-outline mx-1">❯</span>
+<span class="text-on-surface">Y --apply-immediate</span>
+<span class="inline-block w-2 h-4 bg-accent-rose ml-1 animate-pulse"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Metrics Telemetry Spark strip (Inline SVG Visualizations) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter bg-surface-container-lowest p-space-sm shadow-md">
+<!-- Metric 1: WebSocket Telemetry Pipeline -->
+<div class="flex flex-col bg-surface-slate p-space-xs shadow-sm">
+<div class="flex items-center justify-between text-outline font-label-xs text-label-xs">
+<span>SOCKET BUFFER</span>
+<span class="text-terminal-emerald font-bold">60 FPS</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">4.2 <span class="text-body-sm text-outline font-normal">MB/s</span></span>
+<span class="font-label-xs text-label-xs text-terminal-cyan">ArrayBuffer</span>
+</div>
+<!-- Real-time Sparkline SVG -->
+<div class="w-full h-7 mt-1">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 24">
+<path class="text-terminal-cyan" d="M0,20 L15,16 L30,19 L45,10 L60,14 L75,6 L90,11 L100,8" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path class="text-terminal-cyan/10" d="M0,20 L15,16 L30,19 L45,10 L60,14 L75,6 L90,11 L100,8 L100,24 L0,24 Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<!-- Metric 2: Memory Footprint -->
+<div class="flex flex-col bg-surface-slate p-space-xs shadow-sm">
+<div class="flex items-center justify-between text-outline font-label-xs text-label-xs">
+<span>CONPTY MEMORY</span>
+<span class="text-secondary font-bold">3 PTY LIVE</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">148 <span class="text-body-sm text-outline font-normal">MB</span></span>
+<span class="font-label-xs text-label-xs text-secondary">2.4% CORE</span>
+</div>
+<!-- Sparkline -->
+<div class="w-full h-7 mt-1">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 24">
+<path class="text-secondary" d="M0,15 L20,14 L40,15 L60,12 L80,13 L100,10" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path class="text-secondary/10" d="M0,15 L20,14 L40,15 L60,12 L80,13 L100,10 L100,24 L0,24 Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<!-- Metric 3: Token Generation Velocity -->
+<div class="flex flex-col bg-surface-slate p-space-xs shadow-sm">
+<div class="flex items-center justify-between text-outline font-label-xs text-label-xs">
+<span>TOKENS / SEC</span>
+<span class="text-accent-amber font-bold">BURSTING</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-md text-headline-md font-bold text-accent-amber">114 <span class="text-body-sm text-outline font-normal">t/s</span></span>
+<span class="font-label-xs text-label-xs text-on-surface-variant">Avg: 88</span>
+</div>
+<!-- Sparkline -->
+<div class="w-full h-7 mt-1">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 24">
+<path class="text-accent-amber" d="M0,22 L15,18 L35,20 L50,8 L65,14 L80,4 L100,9" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path class="text-accent-amber/10" d="M0,22 L15,18 L35,20 L50,8 L65,14 L80,4 L100,9 L100,24 L0,24 Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<!-- Metric 4: Context Matrix Cache -->
+<div class="flex flex-col bg-surface-slate p-space-xs shadow-sm">
+<div class="flex items-center justify-between text-outline font-label-xs text-label-xs">
+<span>CACHE HIT RATIO</span>
+<span class="text-telemetry-violet font-bold">PROMPT CACHE</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-headline-md text-headline-md font-bold text-telemetry-violet">94.8<span class="text-body-sm text-outline font-normal">%</span></span>
+<span class="font-label-xs text-label-xs text-terminal-emerald font-bold">-$14.20 saved</span>
+</div>
+<!-- Sparkline -->
+<div class="w-full h-7 mt-1">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 24">
+<path class="text-telemetry-violet" d="M0,12 L25,10 L50,9 L75,7 L100,5" fill="none" stroke="currentColor" stroke-width="1.8"></path>
+<path class="text-telemetry-violet/10" d="M0,12 L25,10 L50,9 L75,7 L100,5 L100,24 L0,24 Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- Quick Action Unified Command Interceptor Strip -->
+<div class="w-full bg-surface-slate p-space-xs flex flex-col md:flex-row items-center gap-space-xs shadow-lg">
+<!-- Input Bar with Prompt Prefix -->
+<div class="flex-1 flex items-center bg-surface-container-lowest px-space-sm py-1.5 w-full shadow-inner">
+<span class="text-terminal-cyan font-headline-sm text-headline-sm font-bold mr-2">apex::interceptor❯</span>
+<input class="flex-1 bg-transparent text-on-surface font-body-sm text-body-sm placeholder:text-outline-variant focus:outline-none" id="quick-command-input" placeholder="Type /handoff, /rescan, /kill 4892, or enter natural language prompt..." type="text"/>
+<div class="hidden sm:flex items-center gap-1">
+<button class="px-1.5 py-0.5 bg-surface-container text-outline hover:text-on-surface font-label-xs text-label-xs uppercase">Ctrl+K</button>
+<button class="px-2 py-0.5 bg-telemetry-violet hover:bg-primary-container text-canvas-base font-label-xs text-label-xs uppercase font-bold transition-colors" id="send-cmd-btn">
+              EXECUTE
+            </button>
+</div>
+</div>
+<!-- Quick Macro Buttons -->
+<div class="flex items-center gap-1 overflow-x-auto w-full md:w-auto">
+<button class="macro-btn px-2 py-1 bg-surface-container hover:bg-surface-container-high text-telemetry-violet font-label-xs text-label-xs uppercase font-bold tracking-wider transition-colors">
+            /handoff
+          </button>
+<button class="macro-btn px-2 py-1 bg-surface-container hover:bg-surface-container-high text-secondary font-label-xs text-label-xs uppercase font-bold tracking-wider transition-colors">
+            /rescan
+          </button>
+<button class="macro-btn px-2 py-1 bg-surface-container hover:bg-surface-container-high text-error font-label-xs text-label-xs uppercase font-bold tracking-wider transition-colors">
+            /kill
+          </button>
+<button class="macro-btn px-2 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-xs text-label-xs uppercase font-bold tracking-wider transition-colors">
+            /split
+          </button>
+<button class="macro-btn px-2 py-1 bg-surface-container hover:bg-surface-container-high text-outline font-label-xs text-label-xs uppercase font-bold tracking-wider transition-colors">
+            /clear
+          </button>
+</div>
+</div>
+</section>
+</div>
+<!-- Agent Config / Environment Modal (Hidden by default, triggered by double click) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-canvas-base/80 backdrop-blur-md p-space-md" id="agent-config-modal">
+<div class="w-full max-w-xl bg-surface-slate shadow-2xl p-space-lg flex flex-col gap-space-md relative">
+<div class="flex items-center justify-between pb-space-xs bg-surface-container-lowest p-space-sm">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 bg-terminal-cyan"></span>
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">AGENT CONFIGURATION &amp; ENVIRONMENT</span>
+</div>
+<button class="text-outline hover:text-on-surface p-1" id="close-modal-btn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="flex flex-col gap-space-xs font-body-sm text-body-sm">
+<label class="text-outline font-label-xs text-label-xs uppercase">Target Executable / CLI Wrapper</label>
+<input class="bg-surface-container-lowest text-on-surface px-space-sm py-1.5 focus:outline-none" type="text" value="/usr/local/bin/opencode --telemetry=ws://127.0.0.1:3777"/>
+<label class="text-outline font-label-xs text-label-xs uppercase mt-2">Environment Variables (.env override)</label>
+<textarea class="bg-surface-container-lowest text-on-surface px-space-sm py-1.5 font-mono text-body-sm focus:outline-none" rows="4"># Optional - the free CLIs (opencode / freebuff / openclaude) need NO API keys.
+PTY_BACKEND=ConPTY
+MAX_CONTEXT_CACHE_TOKENS=200000
+AUTO_HANDOFF_DIFF=TRUE</textarea>
+<div class="grid grid-cols-2 gap-space-sm mt-2">
+<div>
+<label class="text-outline font-label-xs text-label-xs uppercase">PTY Buffer Limit</label>
+<input class="w-full bg-surface-container-lowest text-on-surface px-space-sm py-1 focus:outline-none" type="text" value="500 lines (FIFO)"/>
+</div>
+<div>
+<label class="text-outline font-label-xs text-label-xs uppercase">Process Priority</label>
+<input class="w-full bg-surface-container-lowest text-on-surface px-space-sm py-1 focus:outline-none" type="text" value="NICE 0 (Standard)"/>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-end gap-space-sm pt-space-sm">
+<button class="px-space-md py-1.5 bg-surface-container text-on-surface-variant hover:bg-surface-bright font-label-xs text-label-xs uppercase" id="cancel-modal-btn">Cancel</button>
+<button class="px-space-md py-1.5 bg-telemetry-violet hover:bg-primary-container text-canvas-base font-label-xs text-label-xs uppercase font-bold" id="save-modal-btn">Apply &amp; Respawn</button>
+</div>
+</div>
+</div>
+<!-- Inline Micro-Interactions JavaScript Engine -->
+<script>
+    (function() {
+      // Filter Chips Interaction
+      const filterChips = document.querySelectorAll('.filter-chip');
+      const agentCards = document.querySelectorAll('.agent-card');
+
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          filterChips.forEach(c => {
+            c.classList.remove('bg-telemetry-violet', 'text-canvas-base');
+            c.classList.add('bg-surface-container', 'text-outline');
+          });
+          chip.classList.add('bg-telemetry-violet', 'text-canvas-base');
+          chip.classList.remove('bg-surface-container', 'text-outline');
+
+          const label = chip.textContent.toUpperCase();
+          agentCards.forEach(card => {
+            const status = card.getAttribute('data-status');
+            if (label.includes('ALL')) {
+              card.style.display = 'flex';
+            } else if (label.includes('RUNNING') && status === 'running') {
+              card.style.display = 'flex';
+            } else if (label.includes('IDLE') && (status === 'idle' || status === 'ready')) {
+              card.style.display = 'flex';
+            } else if (label.includes('OFF') && status === 'offline') {
+              card.style.display = 'flex';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Quick Search Filter
+      const searchInput = document.getElementById('agent-search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const q = e.target.value.toLowerCase();
+          agentCards.forEach(card => {
+            const text = card.textContent.toLowerCase();
+            card.style.display = text.includes(q) ? 'flex' : 'none';
+          });
+        });
+      }
+
+      // Macro Pill Buttons filling Command Input
+      const macroButtons = document.querySelectorAll('.macro-btn');
+      const cmdInput = document.getElementById('quick-command-input');
+      macroButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (cmdInput) {
+            cmdInput.value = btn.textContent.trim() + ' ';
+            cmdInput.focus();
+          }
+        });
+      });
+
+      // Split Console Layout Toggles
+      const wrapper = document.getElementById('terminal-split-wrapper');
+      const btnH = document.getElementById('toggle-h-split');
+      const btnV = document.getElementById('toggle-v-split');
+      const btnMax = document.getElementById('toggle-maximize-split');
+
+      if (btnH && btnV && btnMax && wrapper) {
+        btnH.addEventListener('click', () => {
+          wrapper.className = 'grid grid-cols-1 lg:grid-cols-2 gap-space-xs min-h-[580px] w-full';
+          btnH.classList.replace('bg-surface-container', 'bg-surface-container-high');
+          btnH.classList.replace('text-outline', 'text-telemetry-violet');
+          btnV.classList.replace('bg-surface-container-high', 'bg-surface-container');
+          btnV.classList.replace('text-telemetry-violet', 'text-outline');
+          btnMax.classList.replace('bg-surface-container-high', 'bg-surface-container');
+          btnMax.classList.replace('text-telemetry-violet', 'text-outline');
+        });
+
+        btnV.addEventListener('click', () => {
+          wrapper.className = 'grid grid-cols-1 gap-space-xs min-h-[580px] w-full';
+          btnV.classList.replace('bg-surface-container', 'bg-surface-container-high');
+          btnV.classList.replace('text-outline', 'text-telemetry-violet');
+          btnH.classList.replace('bg-surface-container-high', 'bg-surface-container');
+          btnH.classList.replace('text-telemetry-violet', 'text-outline');
+          btnMax.classList.replace('bg-surface-container-high', 'bg-surface-container');
+          btnMax.classList.replace('text-telemetry-violet', 'text-outline');
+        });
+
+        btnMax.addEventListener('click', () => {
+          // Toggle Pane 2 visibility to maximize primary
+          const children = wrapper.children;
+          if (children.length > 1) {
+            const isHidden = children[1].classList.contains('hidden');
+            if (!isHidden) {
+              children[1].classList.add('hidden');
+              wrapper.className = 'grid grid-cols-1 min-h-[580px] w-full';
+              btnMax.classList.replace('bg-surface-container', 'bg-surface-container-high');
+              btnMax.classList.replace('text-outline', 'text-telemetry-violet');
+            } else {
+              children[1].classList.remove('hidden');
+              wrapper.className = 'grid grid-cols-1 lg:grid-cols-2 gap-space-xs min-h-[580px] w-full';
+              btnMax.classList.replace('bg-surface-container-high', 'bg-surface-container');
+              btnMax.classList.replace('text-telemetry-violet', 'text-outline');
+            }
+          }
+        });
+      }
+
+      // Modal Dialog Trigger on Agent Card Double Click
+      const modal = document.getElementById('agent-config-modal');
+      const closeModalBtn = document.getElementById('close-modal-btn');
+      const cancelModalBtn = document.getElementById('cancel-modal-btn');
+      const saveModalBtn = document.getElementById('save-modal-btn');
+      const addAgentBtn = document.getElementById('add-custom-agent-btn');
+
+      agentCards.forEach(card => {
+        card.addEventListener('dblclick', () => {
+          if (modal) modal.classList.remove('hidden');
+        });
+      });
+
+      if (addAgentBtn && modal) {
+        addAgentBtn.addEventListener('click', () => {
+          modal.classList.remove('hidden');
+        });
+      }
+
+      const hideModal = () => {
+        if (modal) modal.classList.add('hidden');
+      };
+
+      if (closeModalBtn) closeModalBtn.addEventListener('click', hideModal);
+      if (cancelModalBtn) cancelModalBtn.addEventListener('click', hideModal);
+      if (saveModalBtn) saveModalBtn.addEventListener('click', hideModal);
+
+      // Flash feedback on Send Handoff
+      const handoffBtns = document.querySelectorAll('.handoff-trigger-btn, .handoff-receive-btn');
+      handoffBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<span>⚡ PTY SYNCED</span>';
+          setTimeout(() => {
+            btn.innerHTML = orig;
+          }, 1400);
+        });
+      });
+    })();
+  </script>
+</div></main></div><footer class="fixed bottom-0 left-0 right-0 h-7 bg-surface-container-lowest border-t border-border-grid z-50 flex items-center justify-between px-space-md font-label-xs text-label-xs"><div class="flex items-center gap-space-xs text-outline overflow-hidden truncate"><span class="text-terminal-emerald">PTY_CORE</span><span>•</span><span class="text-on-surface-variant">node-pty (ConPTY/xterm-256color)</span><span>•</span><span class="text-on-surface-variant">UTF-8 Unicode 11</span><span>•</span><span class="text-secondary">Binary ArrayBuffer WebSocket</span></div><div class="hidden md:flex items-center gap-space-md text-outline"><span class="text-on-surface-variant">Ctrl+1-8: Switch Agent</span><span>•</span><span class="text-on-surface-variant">Ctrl+K: Command Palette</span><span>•</span><span class="text-on-surface-variant">Ctrl+W: Close Pane</span><span>•</span><span class="text-on-surface-variant">Ctrl+F: Search</span></div></footer><script>
+    let ws=null,agents=[],activeAgentId=null,connectionStatus="IDLE";
+    const sessions={},agentScrollback={},sessionStatuses={};
+    let currentTheme="dark";
+    const splitSlots=[];
+    let activeSlotIdx=0;
+    const THEMES={
+      dark:{background:"#03050c",foreground:"#e2e8f0",cursor:"#818cf8",selectionBackground:"rgba(129,140,248,0.3)",black:"#0a0e17",red:"#f87171",green:"#4ade80",yellow:"#facc15",blue:"#60a5fa",magenta:"#c084fc",cyan:"#22d3ee",white:"#f1f5f9",brightBlack:"#475569",brightRed:"#fca5a5",brightGreen:"#86efac",brightYellow:"#fde047",brightBlue:"#93c5fd",brightMagenta:"#d8b4fe",brightCyan:"#67e8f9",brightWhite:"#f8fafc"},
+      light:{background:"#f1f5f9",foreground:"#0f172a",cursor:"#4f46e5",selectionBackground:"rgba(79,70,229,0.2)",black:"#0f172a",red:"#dc2626",green:"#16a34a",yellow:"#ca8a04",blue:"#2563eb",magenta:"#9333ea",cyan:"#0891b2",white:"#f8fafc",brightBlack:"#64748b",brightRed:"#f87171",brightGreen:"#4ade80",brightYellow:"#facc15",brightBlue:"#60a5fa",brightMagenta:"#c084fc",brightCyan:"#22d3ee",brightWhite:"#ffffff"},
+      solarized:{background:"#002b36",foreground:"#93a1a1",cursor:"#268bd2",selectionBackground:"rgba(38,139,210,0.25)",black:"#073642",red:"#dc322f",green:"#859900",yellow:"#b58900",blue:"#268bd2",magenta:"#d33682",cyan:"#2aa198",white:"#eee8d5",brightBlack:"#586e75",brightRed:"#cb4b16",brightGreen:"#586e75",brightYellow:"#657b83",brightBlue:"#839496",brightMagenta:"#6c71c4",brightCyan:"#93a1a1",brightWhite:"#fdf6e3"}
+    };
+    function init(){connectWebSocket();fetch("/api/about").then(r=>r.json()).then(d=>{window._aboutData=d;updateWelcomeStats(d);});fetchGitBranch();}
+    function updateWelcomeStats(d){document.getElementById("welcomeAgents").textContent=d.agentsTotal;document.getElementById("welcomeActive").textContent=d.agentsActive;document.getElementById("welcomeSessions").textContent=d.sessionsActive;}
+    function connectWebSocket(){
+      const proto=location.protocol==="https:"?"wss:":"ws:";
+      ws=new WebSocket(`${proto}//${location.host}`);ws.binaryType="arraybuffer";
+      ws.onopen=()=>{setConnectionStatus("CONNECTED");updateWelcomeStats(window._aboutData||{agentsTotal:0,agentsActive:0,sessionsActive:0});};
+      ws.onmessage=(e)=>{
+        if(e.data instanceof ArrayBuffer){
+          const view=new Uint8Array(e.data);if(view.length<2)return;
+          const idLen=view[0];
+          const agentId=new TextDecoder("utf-8",{fatal:false}).decode(view.slice(1,1+idLen));
+          const textData=new TextDecoder("utf-8",{fatal:false}).decode(view.slice(1+idLen));
+          if(!agentScrollback[agentId])agentScrollback[agentId]="";
+          agentScrollback[agentId]+=textData;
+          if(agentScrollback[agentId].length>60000)agentScrollback[agentId]=agentScrollback[agentId].slice(-50000);
+          for(const slot of splitSlots){if(slot.agentId===agentId&&slot.term)slot.term.write(textData);}
+          return;
+        }
+        try{handleMessage(JSON.parse(e.data));}catch{}
+      };
+      ws.onclose=()=>{setConnectionStatus("DISCONNECTED");setTimeout(connectWebSocket,2000);};
+      ws.onerror=()=>{};
+    }
+    function send(msg){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify(msg));}
+    function setConnectionStatus(s){
+      connectionStatus=s;const dot=document.getElementById("connDot"),txt=document.getElementById("connText");
+      dot.className="conn-dot";txt.textContent=s;
+      if(s==="CONNECTED"){dot.classList.add("connected");txt.style.color="#6ee7b7";}
+      else if(s==="DISCONNECTED"){dot.style.background="#f87171";dot.style.boxShadow="0 0 8px rgba(248,113,113,0.5)";txt.style.color="#fca5a5";}
+      else{txt.style.color="var(--t-muted)";}
+    }
+    function fetchGitBranch(){fetch("/api/git-branch").then(r=>r.json()).then(d=>{const el=document.getElementById("gitBranch");if(d.branch){el.textContent=d.branch;el.classList.remove("hidden");}else el.classList.add("hidden");}).catch(()=>{});}
+    function handleMessage(msg){
+      switch(msg.type){
+        case"connected":setConnectionStatus("CONNECTED");break;
+        case"rescan_result":agents=msg.agents;renderAgentCards();if(msg.workspaceDir)setWorkspace(msg.workspaceDir);fetchGitBranch();updateWelcomeStats({agentsTotal:agents.length,agentsActive:agents.filter(a=>a.active).length,sessionsActive:Object.keys(sessions).length});break;
+        case"session_status":sessionStatuses[msg.agentId]={status:msg.status,pid:msg.pid,crashCount:msg.crashCount||0};renderAgentCards();break;
+        case"rate_limit_warning":showRateLimitWarning(msg.agentName||msg.agentId);break;
+        case"session_killed":delete sessionStatuses[msg.agentId];renderAgentCards();showNotification(`${msg.agentId} stopped`,"error");break;
+        case"custom_agent_added":agents.push(msg.agent);renderAgentCards();closeModal();showNotification("Custom agent added","success");break;
+        case"custom_agent_error":const errEl=document.getElementById("customError");errEl.textContent=msg.message;errEl.classList.remove("hidden");break;
+        case"context_handoff_result":showNotification(msg.success?"Context sent to terminal":msg.message,msg.success?"success":"error");break;
+        case"server_shutdown":document.getElementById("shutdownOverlay").classList.remove("hidden");break;
+        case"workspace_changed":setWorkspace(msg.workspaceDir);fetchGitBranch();break;
+        case"config_saved":closeConfig();showNotification("Config saved","success");break;
+        case"notification":if("Notification"in window&&Notification.permission==="granted")new Notification(msg.title,{body:msg.body});showNotification(msg.title,"info");break;
+      }
+    }
+    function setWorkspace(dir){document.getElementById("targetDir").textContent=dir;document.getElementById("welcomeTargetDir").textContent=dir;fetchGitBranch();}
+    const collapsedGroups=new Set();
+    function renderAgentCards(){
+      const container=document.getElementById("agentList");
+      const active=agents.filter(a=>a.active).length;
+      document.getElementById("agentCount").textContent=`${active} of ${agents.length} available`;
+      updateWelcomeStats({agentsTotal:agents.length,agentsActive:active,sessionsActive:Object.keys(sessions).length});
+      if(!agents.length){container.innerHTML=`<div style="text-align:center;color:var(--t-faint);font-size:11px;padding:40px 0;font-family:'JetBrains Mono',monospace;">No agents found</div>`;return;}
+      const groups={};
+      for(const a of agents){const g=a.group||"Other";if(!groups[g])groups[g]=[];groups[g].push(a);}
+      let html="";
+      for(const [grp,list] of Object.entries(groups)){
+        const collapsed=collapsedGroups.has(grp);
+        html+=`<div class="group-header" onclick="toggleGroup('${esc(grp)}')"><span class="group-chevron ${collapsed?"collapsed":""}">&#9660;</span><span>${esc(grp)}</span><span style="font-size:9px;margin-left:auto;opacity:.45;">${list.filter(a=>a.active).length}/${list.length}</span></div>`;
+        if(!collapsed){
+          for(const a of list){
+            const isActive=splitSlots.some(s=>s.agentId===a.id);
+            const s=sessionStatuses[a.id];const pid=s?s.pid:"";const crashCount=s?.crashCount||0;const status=s?.status||"OFFLINE";
+            let dotClass="offline";
+            if(status==="READY"||status==="STARTING")dotClass="online";else if(status==="BUSY"||status==="CONNECTED")dotClass="busy";
+            const statusDot=`<div class="status-dot ${a.active&&dotClass!=="offline"?dotClass:"offline"}" style="${a.active&&dotClass!=="offline"?`box-shadow:0 0 7px ${a.tagColor};`:""}" title="${status}"></div>`;
+            html+=`<div class="agent-card glass-card cursor-pointer mb-1.5 ${isActive?"active":""}" style="--accent:${a.tagColor};padding:9px 11px;" onclick="selectAgent('${a.id}')" ondblclick="openConfigModal('${a.id}')">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5 min-w-0">${statusDot}
+                  <div class="min-w-0">
+                    <div style="font-size:12px;font-weight:600;color:var(--t-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(a.name)}</div>
+                    <div class="flex items-center gap-1.5" style="margin-top:3px;flex-wrap:wrap;">
+                      <span class="badge" style="background:${a.tagColor}18;color:${a.tagColor};border-color:${a.tagColor}30;">${esc(a.tag)}</span>
+                      <span style="font-size:9.5px;color:var(--t-faint);font-family:'JetBrains Mono',monospace;">${esc(a.binary)}</span>
+                      ${crashCount>0?`<span style="font-size:9.5px;color:#f87171;">crashed ${crashCount}x</span>`:""}
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  ${pid?`<span style="font-size:9.5px;color:var(--t-faint);font-family:'JetBrains Mono',monospace;">${pid}</span>`:""}
+                  <button style="font-size:10px;background:rgba(20,28,56,.6);color:var(--t-muted);width:20px;height:20px;border-radius:4px;border:1px solid var(--b-subtle);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;opacity:0;"
+                    onmouseenter="this.style.opacity='1';this.style.background='rgba(239,68,68,.18)';this.style.color='#fca5a5';"
+                    onmouseleave="this.style.opacity='0';this.style.background='rgba(20,28,56,.6)';this.style.color='var(--t-muted)';"
+                    onclick="event.stopPropagation();killAgent('${a.id}')" title="Kill Session">&#10005;</button>
+                </div>
+              </div>
+            </div>`;
+          }
+        }
+      }
+      container.innerHTML=html;
+    }
+    function toggleGroup(g){if(collapsedGroups.has(g))collapsedGroups.delete(g);else collapsedGroups.add(g);renderAgentCards();}
+    function createPaneEl(){const pane=document.createElement("div");pane.className="split-pane";const te=document.createElement("div");te.style.cssText="flex:1;min-height:0;min-width:0;";pane.appendChild(te);return{pane,te};}
+    async function ensureSlot(idx){
+      const slot=splitSlots[idx];if(!slot||!slot.el)return;if(slot.term)return;
+      try{
+        await waitForFonts();
+        await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+        await new Promise(r=>setTimeout(r,50));
+        const theme=THEMES[currentTheme]||THEMES.dark;
+        slot.term=new Terminal({cursorBlink:true,cursorStyle:"bar",fontSize:14,lineHeight:1.2,fontFamily:"'Cascadia Code','JetBrains Mono','Fira Code',Consolas,'Courier New',monospace",fontWeight:"400",fontWeightBold:"600",allowProposedApi:true,scrollback:10000,convertEol:false,scrollOnUserInput:true,drawBoldTextInBrightColors:true,minimumContrastRatio:1,theme,cursorBlinkRate:0,rendererType:'canvas'});
+        try{slot.term.options.devicePixelRatio=Math.min(window.devicePixelRatio||1,2);}catch(e){}
+        try{slot.term.loadAddon(new Unicode11Addon());if(slot.term.unicode)slot.term.unicode.activeVersion="11";}catch(e){console.warn("unicode11:",e);}
+        try{slot.searchAddon=new SearchAddon.SearchAddon();slot.term.loadAddon(slot.searchAddon);}catch(e){console.warn("search:",e);}
+        slot.fitAddon=new FitAddon.FitAddon();slot.term.loadAddon(slot.fitAddon);slot.term.open(slot.el);
+        const slotIdx=idx;let inputBuffer="",inputTimeout=null;
+        slot.term.onData(d=>{inputBuffer+=d;if(inputTimeout)return;inputTimeout=setTimeout(()=>{inputTimeout=null;if(inputBuffer&&splitSlots[slotIdx]&&splitSlots[slotIdx].agentId)send({type:"input",agentId:splitSlots[slotIdx].agentId,data:inputBuffer});inputBuffer="";},16);});
+        slot.term.onResize(({cols,rows})=>{if(splitSlots[slotIdx]&&splitSlots[slotIdx].agentId&&cols>0&&rows>0)send({type:"resize",agentId:splitSlots[slotIdx].agentId,cols,rows});});
+        let resizeRAF=null;
+        try{const ro=new ResizeObserver(()=>{if(resizeRAF)return;resizeRAF=requestAnimationFrame(()=>{resizeRAF=null;if(slot.fitAddon)slot.fitAddon.fit();});});ro.observe(slot.el);slot._resizeObserver=ro;slot._resizeCleanup=()=>{if(resizeRAF){cancelAnimationFrame(resizeRAF);resizeRAF=null;}};}catch(e){}
+        setTimeout(()=>{if(slot.fitAddon)slot.fitAddon.fit();},30);setTimeout(()=>{if(slot.fitAddon)slot.fitAddon.fit();},150);
+        const sb=agentScrollback[slot.agentId]||"";
+        if(sb){const replaySize=Math.min(sb.length,8000);const replay=sb.length>replaySize?sb.slice(-replaySize):sb;if(replay){const chunks=Math.ceil(replay.length/2000);let offset=0;for(let i=0;i<chunks;i++){const chunk=replay.slice(offset,offset+2000);offset+=2000;setTimeout(()=>{if(slot.term&&!slot.term._disposed)slot.term.write(chunk);},i*10);}}}
+      }catch(err){console.error("ensureSlot failed:",err);showNotification("Terminal init failed: "+err.message,"error");}
+    }
+    async function selectAgent(agentId){
+      console.log("[APEX] selectAgent:",agentId);
+      const agent=agents.find(a=>a.id===agentId);
+      if(!agent||!agent.active){showNotification(`${agent?.name||agentId} not available`,"error");return;}
+      const terminalArea=document.getElementById("terminalArea");
+      document.getElementById("welcomeScreen").classList.add("hidden");
+      terminalArea.classList.remove("hidden");terminalArea.style.opacity="0";
+      requestAnimationFrame(()=>{terminalArea.style.transition="opacity 0.2s ease-out";terminalArea.style.opacity="1";});
+      if(splitSlots.length===0){const{pane,te}=createPaneEl();document.getElementById("splitRoot").appendChild(pane);splitSlots[0]={id:0,agentId:null,term:null,fitAddon:null,searchAddon:null,el:te,paneEl:pane,label:"",_resizeObserver:null};activeSlotIdx=0;updateSplitCount();}
+      const slot=splitSlots[activeSlotIdx];
+      if(slot.agentId!==agentId&&slot.term){if(slot._resizeObserver){slot._resizeObserver.disconnect();slot._resizeObserver=null;}if(slot.term)slot.term.dispose();slot.term=null;slot.fitAddon=null;slot.searchAddon=null;}
+      slot.agentId=agentId;slot.label=agent.name;
+      await ensureSlot(activeSlotIdx);
+      if(slot.term){slot.term.clear();slot.term.scrollToBottom();if(slot.term._core&&slot.term._core._renderService){try{slot.term._core._renderService.refresh();}catch(e){}}}
+      updateActivePill(agent);send({type:"switch_agent",agentId});
+      setTimeout(()=>{if(slot.fitAddon)slot.fitAddon.fit();if(slot.term)slot.term.focus();},100);
+      renderAgentCards();closeSidebar();
+    }
+    function splitView(dir){
+      const nextIdx=splitSlots.length;if(nextIdx>=4){showNotification("Max 4 splits","error");return;}
+      const root=document.getElementById("splitRoot");root.className=`split-container ${dir==="v"?"vertical":"horizontal"}`;
+      const{pane,te}=createPaneEl();const cb=document.createElement("div");cb.className="split-close";cb.textContent="&#10005;";
+      ((ii)=>{cb.onclick=()=>removeSlot(ii);})(nextIdx);pane.appendChild(cb);root.appendChild(pane);
+      splitSlots[nextIdx]={id:nextIdx,agentId:null,term:null,fitAddon:null,searchAddon:null,el:te,paneEl:pane,label:"",_resizeObserver:null};
+      activeSlotIdx=nextIdx;updateSplitCount();
+    }
+    function removeSlot(idx){
+      if(splitSlots.length<=1)return;const slot=splitSlots[idx];
+      if(slot._resizeCleanup){slot._resizeCleanup();slot._resizeCleanup=null;}
+      if(slot._resizeObserver){slot._resizeObserver.disconnect();slot._resizeObserver=null;}
+      if(slot.term)slot.term.dispose();if(slot.paneEl)slot.paneEl.remove();
+      splitSlots.splice(idx,1);for(let i=0;i<splitSlots.length;i++)splitSlots[i].id=i;
+      if(activeSlotIdx>=splitSlots.length)activeSlotIdx=splitSlots.length-1;
+      updateSplitCount();setTimeout(()=>{for(const s of splitSlots)if(s.fitAddon)s.fitAddon.fit();},100);
+    }
+    function updateSplitCount(){const el=document.getElementById("splitCount");el.textContent=splitSlots.length>1?`${splitSlots.length} panes`:"";}
+    document.addEventListener("keydown",e=>{
+      if(e.ctrlKey&&!e.shiftKey&&!e.altKey&&e.key>="1"&&e.key<="8"){e.preventDefault();const idx=parseInt(e.key)-1;const active=agents.filter(a=>a.active);if(active[idx])selectAgent(active[idx].id);}
+      if(e.ctrlKey&&e.key==="k"){e.preventDefault();toggleCommandPalette();}
+      if(e.ctrlKey&&e.key==="f"){e.preventDefault();openSearch();}
+      if(e.ctrlKey&&e.key==="w"&&splitSlots.length>1){e.preventDefault();removeSlot(activeSlotIdx);}
+      if(e.key==="Escape"){closeModal();closeWorkspaceModal();dismissRateLimit();closeSidebar();closeSearch();closeCommandPalette();closeConfig();closeAbout();}
+    });
+    let cmdPaletteOpen=false;
+    const commands=[
+      {id:"rescan",label:"Rescan Agents",icon:"&#9889;",action:rescanAgents},
+      {id:"workspace",label:"Change Workspace",icon:"&#128193;",action:promptWorkspace},
+      {id:"add-agent",label:"Add Custom Agent",icon:"&#10133;",action:openModal},
+      {id:"split-h",label:"Split Horizontal",icon:"&#11020;",action:()=>splitView("h")},
+      {id:"split-v",label:"Split Vertical",icon:"&#11021;",action:()=>splitView("v")},
+      {id:"search",label:"Search in Terminal",icon:"&#128269;",action:openSearch},
+      {id:"export",label:"Export Active Log",icon:"&#128190;",action:exportActiveLog},
+      {id:"restart",label:"Restart Active Agent",icon:"&#128260;",action:restartAgent},
+      {id:"stop",label:"Stop Active Agent",icon:"&#9632;",action:stopAgent},
+      {id:"handoff",label:"Context Handoff",icon:"&#128203;",action:contextHandoff},
+      {id:"about",label:"About",icon:"&#8505;",action:openAbout},
+      {id:"shutdown",label:"Shutdown Server",icon:"&#9211;",action:shutdownServer},
+    ];
+    function toggleCommandPalette(){cmdPaletteOpen?closeCommandPalette():openCommandPalette();}
+    function openCommandPalette(){cmdPaletteOpen=true;document.getElementById("cmdPalette").classList.remove("hidden");const inp=document.getElementById("cmdInput");inp.value="";inp.focus();filterCommands();}
+    function closeCommandPalette(){cmdPaletteOpen=false;document.getElementById("cmdPalette").classList.add("hidden");}
+    function filterCommands(){
+      const q=document.getElementById("cmdInput").value.toLowerCase();
+      const list=[...commands,...agents.map(a=>({id:a.id,label:a.name,icon:"&#129302;",action:()=>selectAgent(a.id),agent:true}))];
+      const filtered=list.filter(c=>c.label.toLowerCase().includes(q));
+      document.getElementById("cmdList").innerHTML=filtered.map(c=>`<div class="cmd-item" onclick="cmdExecute('${c.id}')"><span class="icon">${c.icon}</span><span>${esc(c.label)}</span>${c.agent?'<span class="badge" style="font-size:9px;padding:2px 6px;">agent</span>':''}</div>`).join("");
+    }
+    function cmdExecute(id){closeCommandPalette();const list=[...commands,...agents.map(a=>({id:a.id,action:()=>selectAgent(a.id)}))];const cmd=list.find(c=>c.id===id);if(cmd)cmd.action();}
+    let searchOpen=false;
+    function openSearch(){searchOpen=true;document.getElementById("searchBar").classList.remove("hidden");document.getElementById("searchInput").focus();}
+    function closeSearch(){searchOpen=false;document.getElementById("searchBar").classList.add("hidden");const slot=splitSlots[activeSlotIdx];if(slot?.searchAddon)slot.searchAddon.clearDecorations();}
+    function doSearch(){const q=document.getElementById("searchInput").value;const slot=splitSlots[activeSlotIdx];if(!slot?.searchAddon||!q){document.getElementById("searchCount").textContent="0/0";return;}const matches=slot.searchAddon.findAll(q);const count=matches?matches.length:0;document.getElementById("searchCount").textContent=count>0?`1/${count}`:"0/0";}
+    function searchNext(){const q=document.getElementById("searchInput").value;const slot=splitSlots[activeSlotIdx];if(slot?.searchAddon&&q)slot.searchAddon.findNext(q,{caseSensitive:false});}
+    function searchPrev(){const q=document.getElementById("searchInput").value;const slot=splitSlots[activeSlotIdx];if(slot?.searchAddon&&q)slot.searchAddon.findPrevious(q,{caseSensitive:false});}
+    function setTheme(t){currentTheme=t;document.body.setAttribute("data-theme",t);document.querySelectorAll(".theme-btn").forEach(b=>b.classList.toggle("active",b.dataset.theme===t));for(const slot of splitSlots){if(slot.term)slot.term.options.theme=THEMES[t]||THEMES.dark;}localStorage.setItem("switchyard-theme",t);}
+    function openAbout(){
+      document.getElementById("aboutModal").classList.remove("hidden");
+      fetch("/api/about").then(r=>r.json()).then(d=>{
+        document.getElementById("aboutGrid").innerHTML=`
+          <div class="about-item"><div class="about-label">Version</div><div class="about-value">${d.version}</div></div>
+          <div class="about-item"><div class="about-label">Platform</div><div class="about-value">${d.platform}</div></div>
+          <div class="about-item"><div class="about-label">Node.js</div><div class="about-value">${d.nodeVersion}</div></div>
+          <div class="about-item"><div class="about-label">Agents</div><div class="about-value">${d.agentsActive}/${d.agentsTotal} active</div></div>
+          <div class="about-item"><div class="about-label">Sessions</div><div class="about-value">${d.sessionsActive}</div></div>
+          <div class="about-item"><div class="about-label">Data Dir</div><div class="about-value" style="font-size:11px;">${d.dataDir}</div></div>
+          <div class="about-item" style="grid-column:span 2;"><div class="about-label">Workspace</div><div class="about-value" style="font-size:11px;">${d.workspaceDir}</div></div>`;
+      });
+    }
+    function closeAbout(){document.getElementById("aboutModal").classList.add("hidden");}
+    let configAgentId=null;
+    function openConfigModal(agentId){configAgentId=agentId;const agent=agents.find(a=>a.id===agentId);document.getElementById("configTitle").textContent=`Settings: ${agent?.name||agentId}`;document.getElementById("configModal").classList.remove("hidden");fetch(`/api/config/${agentId}`).then(r=>r.json()).then(cfg=>{document.getElementById("cfgArgs").value=(cfg.args||[]).join(" ");document.getElementById("cfgCwd").value=cfg.cwd||"";document.getElementById("cfgEnv").value=Object.entries(cfg.env||{}).map(([k,v])=>`${k}=${v}`).join("\n");document.getElementById("cfgGroup").value=cfg.group||"";document.getElementById("cfgAutoRestart").classList.toggle("on",!!cfg.autoRestart);});}
+    function closeConfig(){document.getElementById("configModal").classList.add("hidden");configAgentId=null;}
+    function saveConfig(){if(!configAgentId)return;const argsStr=document.getElementById("cfgArgs").value.trim();const args=argsStr?argsStr.split(/\s+/):[];const cwd=document.getElementById("cfgCwd").value.trim();const envLines=document.getElementById("cfgEnv").value.trim().split("\n").filter(Boolean);const env={};for(const line of envLines){const[k,...v]=line.split("=");if(k)env[k.trim()]=v.join("=").trim();}const group=document.getElementById("cfgGroup").value.trim()||"Other";const autoRestart=document.getElementById("cfgAutoRestart").classList.contains("on");send({type:"save_agent_config",agentId:configAgentId,config:{args,cwd,env,group,autoRestart}});}
+    function exportActiveLog(){const slot=splitSlots[activeSlotIdx];if(!slot?.agentId){showNotification("No active agent","error");return;}window.open(`/api/export/${slot.agentId}`,"_blank");}
+    function rescanAgents(){const btn=document.getElementById("rescanBtn"),icon=document.getElementById("rescanIcon");btn.disabled=true;icon.classList.add("animate-spin");fetch("/api/agents/rescan",{method:"POST"}).then(r=>r.json()).then(()=>{setTimeout(()=>{btn.disabled=false;icon.classList.remove("animate-spin");},800);}).catch(()=>{btn.disabled=false;icon.classList.remove("animate-spin");});}
+    function killAgent(id){send({type:"kill_session",agentId:id});delete sessionStatuses[id];for(let i=splitSlots.length-1;i>=0;i--){if(splitSlots[i].agentId===id)removeSlot(i);}renderAgentCards();if(splitSlots.length===0){updateActivePill(null);document.getElementById("welcomeScreen").classList.remove("hidden");document.getElementById("terminalArea").classList.add("hidden");}}
+    function restartAgent(){const slot=splitSlots[activeSlotIdx];if(!slot?.agentId)return;send({type:"restart_session",agentId:slot.agentId});if(slot.term)slot.term.clear();delete agentScrollback[slot.agentId];showNotification("Restarting session...","info");}
+    function stopAgent(){const slot=splitSlots[activeSlotIdx];if(slot?.agentId)killAgent(slot.agentId);}
+    function contextHandoff(){const slot=splitSlots[activeSlotIdx];if(slot?.agentId)send({type:"context_handoff",agentId:slot.agentId});}
+    function shutdownServer(){if(!confirm("Stop the APEX server?"))return;fetch("/api/shutdown",{method:"POST"}).catch(()=>{});document.getElementById("shutdownOverlay").classList.remove("hidden");}
+    function showRateLimitWarning(name){document.getElementById("rateLimitText").textContent=`${name||"Agent"} may be rate-limited.`;document.getElementById("rateLimitBanner").classList.remove("hidden");}
+    function dismissRateLimit(){document.getElementById("rateLimitBanner").classList.add("hidden");}
+    function switchToAvailableAgent(){const avail=agents.filter(a=>a.active&&!splitSlots.some(s=>s.agentId===a.id));if(avail.length)selectAgent(avail[0].id);else showNotification("No other agents available","error");dismissRateLimit();}
+    function openModal(){["customId","customName","customBinary","customArgs"].forEach(id=>document.getElementById(id).value="");document.getElementById("customError").classList.add("hidden");document.getElementById("modal").classList.remove("hidden");document.getElementById("customId").focus();}
+    function closeModal(){document.getElementById("modal").classList.add("hidden");}
+    function addCustomAgent(){const id=document.getElementById("customId").value.trim(),name=document.getElementById("customName").value.trim(),binary=document.getElementById("customBinary").value.trim(),argsStr=document.getElementById("customArgs").value.trim();const args=argsStr?argsStr.split(/\s+/):[];if(!id||!name||!binary){document.getElementById("customError").textContent="All fields required.";document.getElementById("customError").classList.remove("hidden");return;}if(!/^[a-zA-Z0-9_-]+$/.test(id)){document.getElementById("customError").textContent="ID: letters, numbers, hyphens, underscores only.";document.getElementById("customError").classList.remove("hidden");return;}send({type:"add_custom_agent",agentId:id,name,binary,args});}
+    function promptWorkspace(){document.getElementById("workspaceInput").value=document.getElementById("targetDir").textContent;document.getElementById("workspaceError").classList.add("hidden");document.getElementById("workspaceModal").classList.remove("hidden");document.getElementById("workspaceInput").focus();}
+    function closeWorkspaceModal(){document.getElementById("workspaceModal").classList.add("hidden");}
+    function applyWorkspace(){const dir=document.getElementById("workspaceInput").value.trim();if(!dir){document.getElementById("workspaceError").textContent="Enter a path.";document.getElementById("workspaceError").classList.remove("hidden");return;}fetch("/api/workspace",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dir})}).then(r=>r.json()).then(d=>{if(d.error){document.getElementById("workspaceError").textContent=d.error;document.getElementById("workspaceError").classList.remove("hidden");}else{setWorkspace(d.workspaceDir);closeWorkspaceModal();showNotification("Workspace: "+d.workspaceDir,"success");}}).catch(e=>{document.getElementById("workspaceError").textContent=e.message;document.getElementById("workspaceError").classList.remove("hidden");});}
+    function updateActivePill(agent){const pill=document.getElementById("activePill"),dot=document.getElementById("activeDot"),name=document.getElementById("activeAgentName"),tag=document.getElementById("activeAgentTag"),hb=document.getElementById("handoffBtn"),rb=document.getElementById("restartBtn"),sb=document.getElementById("stopBtn");if(agent){pill.classList.remove("hidden");dot.style.background=agent.tagColor;dot.style.boxShadow=`0 0 8px ${agent.tagColor}`;name.textContent=agent.name;tag.textContent=agent.tag;tag.style.background=`${agent.tagColor}20`;tag.style.color=agent.tagColor;tag.style.borderColor=`${agent.tagColor}30`;hb.disabled=rb.disabled=sb.disabled=false;}else{pill.classList.add("hidden");hb.disabled=rb.disabled=sb.disabled=true;}}
+    function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("sidebarOverlay").classList.remove("hidden");}
+    function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebarOverlay").classList.add("hidden");}
+    function showNotification(msg,type="info"){const colors={success:"notification-success",error:"notification-error",info:"notification-info"};const el=document.createElement("div");el.className=`notification-toast ${colors[type]||colors.info}`;el.textContent=msg;const container=document.getElementById("toastContainer");container.appendChild(el);setTimeout(()=>el.remove(),3000);}
+    let fontsReady=false;
+    function waitForFonts(){if(fontsReady)return Promise.resolve();return Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))]).then(()=>{fontsReady=true;});}
+    function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+    const savedTheme=localStorage.getItem("switchyard-theme")||"dark";
+    setTheme(savedTheme);
+    document.addEventListener("DOMContentLoaded",init);
+  </script></body></html>

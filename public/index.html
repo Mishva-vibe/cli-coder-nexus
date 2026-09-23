@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="shell-type" content="web_dashboard"/>
+  <title>APEX // Coder Hub</title>
+
+  <!-- xterm.js terminal styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css"/>
+
+  <!-- JetBrains Mono for UI & terminal -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --bg:#0a0d14;--bg2:#10131a;--bg3:#1d1f27;--fg:#e2e8f0;--muted:#94a3b8;
+      --accent:#a855f7;--accent2:#8b5cf6;--border:#1e293b;--green:#10b981;
+      --red:#ef4444;--amber:#f59e0b;--cyan:#06b6d4;--radius:3px;
+      --fm:'JetBrains Mono',Consolas,Monaco,'Courier New',monospace;
+    }
+    [data-theme=light]{
+      --bg:#f8fafc;--bg2:#f1f5f9;--bg3:#e2e8f0;--fg:#0f172a;--muted:#64748b;
+      --accent:#4f46e5;--accent2:#4338ca;--border:#cbd5e1;--green:#16a34a;
+      --red:#dc2626;--amber:#ca8a04;--cyan:#0891b2;
+    }
+    [data-theme=solarized]{
+      --bg:#002b36;--bg2:#073642;--bg3:#073642;--fg:#93a1a1;--muted:#657b83;
+      --accent:#268bd2;--accent2:#268bd2;--border:#002b36;--green:#859900;
+      --red:#dc322f;--amber:#b58900;--cyan:#2aa198;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--fm);font-size:13px;background:var(--bg);color:var(--fg);overflow:hidden;user-select:none}
+    /* Faint text for empty states */
+    :root{--t-faint:var(--muted);}
+    /* Header */
+    header{position:fixed;top:0;left:0;right:0;height:38px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:100;font-size:12px}
+    .hdr-left{display:flex;align-items:center;gap:8px}
+    .logo{font-weight:700;color:var(--accent)}
+    .logo-pipe{color:var(--cyan)}
+    .version{color:var(--muted);font-size:11px;background:var(--bg3);padding:1px 6px;border-radius:2px}
+    .workspace-path{color:var(--cyan);font-size:11px;font-family:var(--fm)}
+    .git-branch{color:var(--green);font-size:11px;background:var(--bg3);padding:1px 6px;border-radius:2px}
+    .git-branch.hidden{display:none}
+    #connStatus{display:inline-flex;align-items:center;gap:4px}
+    .conn-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:all .2s}
+    .conn-dot.connected{background:var(--green);box-shadow:0 0 6px var(--green)}
+    .conn-dot.disconnected{background:var(--red);box-shadow:0 0 6px var(--red)}
+    .hdr-actions{display:flex;align-items:center;gap:4px}
+    .hdr-btn{padding:3px 10px;font-size:11px;font-weight:600;text-transform:uppercase;border:1px solid var(--border);background:var(--bg);color:var(--fg);cursor:pointer;border-radius:var(--radius);transition:all .15s}
+    .hdr-btn:hover{transform:translateY(-1px)}
+    .hdr-btn.primary{background:var(--accent);color:var(--bg)}
+    .hdr-btn.secondary{background:var(--cyan);color:var(--bg)}
+    /* Sidebar */
+    #sidebar{position:fixed;top:38px;left:0;bottom:28px;width:250px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;z-index:50}
+    #sidebar.hidden{display:none}
+    #sidebarOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:40}
+    #sidebarOverlay.hidden{display:none}
+    .sidebar-head{padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+    .sidebar-head .count{font-weight:600;color:var(--fg)}
+    .search-wrap{padding:4px 6px}
+    .search-wrap input{width:100%;padding:3px 6px;font-family:var(--fm);font-size:11px;background:var(--bg);border:1px solid var(--border);color:var(--fg);border-radius:var(--radius)}
+    .agent-list{flex:1;overflow-y:auto;padding:2px}
+    .group-header{padding:4px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px}
+    .group-header:hover{color:var(--fg)}
+    .group-chevron{display:inline-block;font-size:9px;transition:transform .15s}
+    .group-chevron.collapsed{transform:rotate(-90deg)}
+    .agent-card{display:flex;align-items:center;gap:5px;padding:5px 8px;margin-bottom:1px;cursor:pointer;border-radius:var(--radius);font-size:12px;transition:background .15s}
+    .agent-card:hover{background:var(--bg3)}
+    .agent-card.active{background:var(--accent);color:var(--bg)}
+    .agent-card.active .agent-name{color:var(--bg)}
+    .agent-card.active .agent-binary{color:var(--bg);opacity:.7}
+    .status-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0}
+    .status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+    .status-dot.busy{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+    .agent-name{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+    .tag-badge{font-size:9px;font-weight:700;padding:1px 4px;border-radius:2px;border:1px solid transparent;white-space:nowrap}
+    .agent-binary{font-size:10px;color:var(--muted);font-family:var(--fm)}
+    .crash-count{font-size:9px;color:var(--red);margin-left:auto}
+    /* Terminal */
+    #terminalArea{position:fixed;top:38px;left:250px;right:0;bottom:28px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+    #welcomeScreen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);z-index:5}
+    .welcome-screen{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .welcome-title{font-size:22px;font-weight:700;color:var(--accent)}
+    .welcome-text{font-size:12px;text-align:center;max-width:360px;line-height:1.5}
+    .kbd-hint{font-size:10px;color:var(--muted);background:var(--bg3);padding:1px 5px;border-radius:2px}
+    #splitRoot{flex:1;display:flex;flex-direction:column;padding:4px;gap:4px}
+    #splitRoot.grid2x2{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+    .terminal-pane{display:flex;flex-direction:column;flex:1;min-height:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg)}
+    .pane-header{display:flex;align-items:center;justify-content:space-between;padding:2px 8px;background:var(--bg2);border-bottom:1px solid var(--border);font-size:11px;color:var(--muted)}
+    .pane-title{color:var(--fg);font-weight:600}
+    .pane-tag{font-size:9px;padding:1px 4px;border-radius:2px}
+    .pane-actions{display:flex;gap:2px}
+    .pane-btn{padding:1px 6px;font-size:10px;background:var(--bg);border:1px solid var(--border);color:var(--fg);cursor:pointer;border-radius:var(--radius)}
+    .pane-btn:hover{color:var(--accent)}
+    .terminal-container{flex:1;width:100%}
+    /* Footer */
+    footer{position:fixed;bottom:0;left:0;right:0;height:28px;background:var(--bg2);border-top:1px solid var(--border);padding:0 12px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted)}
+    #splitCount{font-weight:600;color:var(--fg)}
+    #activePill{position:fixed;bottom:28px;left:250px;padding:2px 8px;background:var(--green);color:var(--bg);font-size:11px;font-weight:600;border-radius:var(--radius);z-index:10}
+    #activePill.hidden{display:none}
+    /* Rate-limit banner */
+    #rateLimitBanner{position:fixed;top:38px;left:250px;right:0;background:var(--red);color:var(--bg);padding:4px 8px;font-size:11px;font-weight:600;z-index:50}
+    #rateLimitBanner.hidden{display:none}
+    /* Toasts */
+    #toastContainer{position:fixed;bottom:28px;right:12px;display:flex;flex-direction:column;gap:2px;z-index:200}
+    .toast{padding:6px 10px;font-size:11px;border-radius:var(--radius);border:1px solid var(--border);min-width:180px;text-align:center;animation:.2s ease-in}
+    .toast-success{border-color:var(--green);color:var(--green)}
+    .toast-error{border-color:var(--red);color:var(--red)}
+    .toast-info{border-color:var(--cyan);color:var(--cyan)}
+    /* Modals */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:200}
+    .modal-content{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);width:90%;max-width:460px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+    .modal-header{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+    .modal-body{padding:12px;overflow-y:auto;flex:1}
+    .modal-footer{padding:8px 12px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:6px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+    .form-field{display:flex;flex-direction:column;gap:2px}
+    .form-field.full{grid-column:1/-1}
+    .form-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+    .form-input,.form-textarea,.form-select{padding:4px 6px;font-family:var(--fm);font-size:11px;background:var(--bg);border:1px solid var(--border);color:var(--fg);border-radius:var(--radius)}
+    .form-input:focus,.form-textarea:focus,.form-select:focus{outline:1px solid var(--accent);outline-offset:-1px}
+    .form-textarea{resize:vertical;min-height:80px}
+    .btn{padding:4px 12px;font-size:11px;font-weight:600;border:1px solid var(--border);background:var(--bg);color:var(--fg);cursor:pointer;border-radius:var(--radius);transition:all .15s}
+    .btn:hover{background:var(--bg3)}
+    .btn-primary{background:var(--accent);color:var(--bg)}
+    .btn-primary:hover{background:var(--accent2)}
+    .btn-sm{padding:2px 8px;font-size:10px}
+    .cmd-list{list-style:none;max-height:300px;overflow-y:auto}
+    .cmd-item{padding:5px 8px;font-size:12px;cursor:pointer;border-radius:var(--radius);display:flex;align-items:center;gap:6px}
+    .cmd-item:hover{background:var(--bg3)}
+    .cmd-item .cmd-hint{font-size:10px;color:var(--muted);margin-left:auto}
+    .cmd-input{width:100%;padding:6px 8px;font-family:var(--fm);font-size:12px;background:var(--bg);border:1px solid var(--border);color:var(--fg);border-radius:var(--radius);border-bottom-right-radius:0;border-bottom-left-radius:0}
+    .agent-select-row{display:flex;align-items:center;gap:4px;padding:3px 0}
+    .agent-select-label{color:var(--muted);min-width:60px;font-size:11px}
+    .agent-select-value{color:var(--fg);font-weight:600}
+    .hidden{display:none!important}
+    /* Scrollbars */
+    .agent-list::-webkit-scrollbar,.modal-body::-webkit-scrollbar,.cmd-list::-webkit-scrollbar{width:5px}
+    .agent-list::-webkit-scrollbar-track,.modal-body::-webkit-scrollbar-track,.cmd-list::-webkit-scrollbar-track{background:var(--bg)}
+    .agent-list::-webkit-scrollbar-thumb,.modal-body::-webkit-scrollbar-thumb,.cmd-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    .agent-list::-webkit-scrollbar-thumb:hover,.modal-body::-webkit-scrollbar-thumb:hover,.cmd-list::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+  </style>
+</head>
+
+<body data-theme="dark">
+  <!-- Header -->
+  <header>
+    <div class="hdr-left">
+      <span class="logo">APEX</span><span class="logo-pipe">//</span><span class="logo">Coder Hub</span>
+      <span class="version">v1.0.4</span>
+      <span id="targetDir" class="workspace-path"></span>
+      <span id="gitBranch" class="git-branch hidden"></span>
+    </div>
+    <div class="hdr-actions">
+      <span id="connStatus"><span id="connDot" class="conn-dot"></span><span id="connText">DISCONNECTED</span></span>
+      <button id="handoffBtn" class="hdr-btn" title="Context Handoff (Ctrl+H)">📋 Handoff</button>
+      <button id="restartBtn" class="hdr-btn" title="Restart Session">↻</button>
+      <button id="stopBtn" class="hdr-btn" title="Kill Session">✕</button>
+      <button id="rescanBtn" class="hdr-btn" title="Rescan Agents (Ctrl+R)">⚡</button>
+      <button id="addAgentBtn" class="hdr-btn primary" title="Add Custom Agent">＋</button>
+      <button id="themeToggle" class="hdr-btn btn-sm" title="Toggle Theme">◐</button>
+      <button id="aboutBtn" class="hdr-btn btn-sm" title="About">ⓘ</button>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-head">
+      <input type="text" id="agentSearch" placeholder="Search agents..." style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:2px;padding:2px 6px;font-size:11px;color:var(--fg);font-family:var(--fm);outline:none;" oninput="filterAgentList(agents, this.value); renderAgentCards();" />
+    </div>
+      <span>Agent Roster</span>
+      <span id="agentCount" class="count">0/0 available</span>
+    </div>
+    <div class="search-wrap">
+      <input id="agent-search-input" type="text" placeholder="Filter agents… (Ctrl+F)" autocomplete="off"/>
+    </div>
+    <div id="agentList" class="agent-list"></div>
+  </aside>
+  <div id="sidebarOverlay" class="hidden"></div>
+  <div id="shutdownOverlay" class="overlay hidden">
+    <div class="overlay-content">
+      <div class="welcome-title">Server Shutting Down</div>
+      <div class="welcome-text" style="margin-top:8px">The APEX Coder Hub server is stopping.</div>
+    </div>
+  </div>
+
+  <!-- Terminal Area -->
+  <main id="terminalArea">
+    <div id="splitRoot">
+      <div id="welcomeScreen">
+        <div class="welcome-screen">
+          <div class="welcome-title">APEX // Coder Hub</div>
+          <div class="welcome-text">
+            Select an agent from the sidebar to start a terminal session.<br/>
+            <span class="kbd-hint">Ctrl+1–8</span> switch agent &nbsp;|&nbsp;
+            <span class="kbd-hint">Ctrl+K</span> command palette &nbsp;|&nbsp;
+            <span class="kbd-hint">Ctrl+F</span> search &nbsp;|&nbsp;
+            <span class="kbd-hint">Ctrl+W</span> close pane
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="activePill" class="hidden"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div>
+      <span id="targetDirFooter"></span>
+      <span id="gitBranchFooter" class="hidden"></span>
+    </div>
+    <div><span id="splitCount">0 panes</span></div>
+    <div>Ctrl+1-8: Switch | Ctrl+K: Palette | Ctrl+F: Search | Ctrl+W: Close | Esc: Close</div>
+  </footer>
+
+  <!-- Rate-limit banner -->
+  <div id="rateLimitBanner" class="hidden">
+    <span id="rateLimitText"></span>
+  </div>
+
+  <!-- Toasts -->
+  <div id="toastContainer"></div>
+
+  <!-- About Modal -->
+  <div id="aboutModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>About APEX // Coder Hub</span>
+        <button class="btn btn-sm" onclick="closeModal('aboutModal')">✕</button>
+      </div>
+      <div class="modal-body" id="aboutGrid">
+        <div class="form-grid">
+          <div class="agent-select-row"><span class="agent-select-label">Version</span><span id="aboutVersion" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Author</span><span id="aboutAuthor" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Platform</span><span id="aboutPlatform" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Node</span><span id="aboutNode" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Agents</span><span id="aboutAgents" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Sessions</span><span id="aboutSessions" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Workspace</span><span id="aboutWorkspace" class="agent-select-value"></span></div>
+          <div class="agent-select-row"><span class="agent-select-label">Data Dir</span><span id="aboutDataDir" class="agent-select-value"></span></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('aboutModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Config Modal -->
+  <div id="configModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <span>Agent Configuration</span>
+          <div id="configTitle" style="font-size:10px;color:var(--muted);font-weight:400"></div>
+        </div>
+        <button class="btn btn-sm" onclick="closeModal('configModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label class="form-label">Executable</label>
+            <input id="cfgBinary" type="text" class="form-input" readonly/>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Arguments (space-separated)</label>
+            <input id="cfgArgs" type="text" class="form-input" placeholder="--model gpt-4 --verbose"/>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Group</label>
+            <input id="cfgGroup" type="text" class="form-input" placeholder="Core"/>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Auto-restart</label>
+            <input id="cfgAutoRestart" type="checkbox"/>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Working Directory</label>
+            <input id="cfgCwd" type="text" class="form-input" placeholder="/home/user/projects"/>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Environment Variables (KEY=VALUE, one per line) &mdash; optional</label>
+            <textarea id="cfgEnv" class="form-textarea" placeholder="# Optional. The default free agents (opencode, freebuff, openclaude) need NO API keys.&#10;NO_COLOR=1&#10;# TERM=xterm-256color"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('configModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveConfig()">Apply &amp; Respawn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workspace Modal -->
+  <div id="workspaceModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header"><span>Change Workspace</span></div>
+      <div class="modal-body">
+        <div class="form-field full">
+          <label class="form-label">Directory</label>
+          <input id="workspaceInput" type="text" class="form-input" placeholder="C:\projects\myapp"/>
+        </div>
+        <div style="margin-top:8px;font-size:10px;color:var(--muted)">
+          Error: <span id="workspaceError" class="hidden"></span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('workspaceModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveWorkspace()">Change</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette -->
+  <div id="cmdPalette" class="modal hidden">
+    <div class="modal-content" style="max-width:500px">
+      <div class="modal-header">
+        <span>Command Palette (Ctrl+K)</span>
+        <button class="btn btn-sm" onclick="closeModal('cmdPalette')">✕</button>
+      </div>
+      <div class="modal-body" style="padding:0">
+        <input id="cmdInput" class="cmd-input" type="text" placeholder="Type a command…" autocomplete="off"/>
+        <ul id="cmdList" class="cmd-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div id="searchBar" class="modal hidden">
+    <div class="modal-content" style="max-width:480px">
+      <div class="modal-header">
+        <span>Search Terminal (Ctrl+F)</span>
+        <button class="btn btn-sm" onclick="closeModal('searchBar')">✕</button>
+      </div>
+      <div class="modal-body">
+        <input id="searchInput" type="text" class="form-input" placeholder="Search text…" autocomplete="off"/>
+        <div id="searchCount" style="margin-top:6px;font-size:11px;color:var(--muted)"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm" onclick="findPrev()">Prev</button>
+        <button class="btn btn-sm" onclick="findNext()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Agent Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span>Add Custom Agent</span>
+        <button class="btn btn-sm" onclick="closeModal('modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-field full"><label class="form-label">Agent ID</label><input id="customId" type="text" class="form-input" placeholder="my-agent"/></div>
+          <div class="form-field full"><label class="form-label">Display Name</label><input id="customName" type="text" class="form-input" placeholder="My Custom Agent"/></div>
+          <div class="form-field full"><label class="form-label">Binary / CLI Wrapper</label><input id="customBinary" type="text" class="form-input" placeholder="opencode"/></div>
+          <div class="form-field full"><label class="form-label">Arguments</label><input id="customArgs" type="text" class="form-input" placeholder="--model gpt-4"/></div>
+          <div class="form-field"><label class="form-label">Group</label><input id="customGroup" type="text" class="form-input" placeholder="Custom"/></div>
+        </div>
+        <div id="customError" class="hidden" style="margin-top:6px;font-size:10px;color:var(--red)"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal')">Cancel</button>
+        <button class="btn-primary" onclick="addCustomAgent()">Add Agent</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- xterm.js + addons -->
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-unicode11@0.9.0/lib/addon-unicode11.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-search@0.16.0/lib/addon-search.min.js"></script>
+
+  <script>
+    /* ── State ────────────────────────────────────────────────────── */
+    let ws=null,agents=[],activeAgentId=null,connectionStatus="IDLE",currentTheme="dark";
+    const savedTheme=localStorage.getItem("switchyard-theme")||"dark";
+    const sessions={},agentScrollback={},sessionStatuses={};
+    const splitSlots=[]; let activeSlotIdx=0;
+    const collapsedGroups=new Set();
+    /* Agents we already warned about needing a sign-in / API key. */
+    const warnedKeyAgents=new Set();
+    let fontsReady=false;
+    /* One shared UTF-8 decoder for all binary PTY frames. NOTE: TextDecoder's
+       first argument is the encoding *label* - passing an options object there
+       ("new TextDecoder({fatal:false})") throws
+       "Failed to construct 'TextDecoder': The encoding label provided
+       ('[object Object]') is invalid" on every single frame, which silently
+       left the terminal blank. */
+    const utf8Decoder=new TextDecoder("utf-8",{fatal:false});
+
+    const THEMES={
+      dark:{background:"#000000",foreground:"#e2e8f0",cursor:"#a855f7",cursorAccent:"#000000",selectionBackground:"rgba(168,85,247,0.3)",black:"#0a0e17",red:"#f87171",green:"#4ade80",yellow:"#facc15",blue:"#60a5fa",magenta:"#c084fc",cyan:"#22d3ee",white:"#f1f5f9",brightBlack:"#475569",brightRed:"#fca5a5",brightGreen:"#86efac",brightYellow:"#fde047",brightBlue:"#93c5fd",brightMagenta:"#d8b4fe",brightCyan:"#67e8f9",brightWhite:"#f8fafc"},
+      light:{background:"#f8fafc",foreground:"#0f172a",cursor:"#4f46e5",cursorAccent:"#000000",selectionBackground:"rgba(79,70,229,0.2)",black:"#0f172a",red:"#dc2626",green:"#16a34a",yellow:"#ca8a04",blue:"#2563eb",magenta:"#9333ea",cyan:"#0891b2",white:"#0a0e15",brightBlack:"#64748b",brightRed:"#f87171",brightGreen:"#4ade80",brightYellow:"#facc15",brightBlue:"#60a5fa",brightMagenta:"#c084fc",brightCyan:"#22d3ee",brightWhite:"#020617"},
+      solarized:{background:"#002b36",foreground:"#93a1a1",cursor:"#268bd2",cursorAccent:"#000000",selectionBackground:"rgba(38,139,210,0.25)",black:"#073642",red:"#dc322f",green:"#859900",yellow:"#b58900",blue:"#268bd2",magenta:"#d33682",cyan:"#2aa198",white:"#eee8d5",brightBlack:"#586e75",brightRed:"#cb4b16",brightGreen:"#586e75",brightYellow:"#657b83",brightBlue:"#839496",brightMagenta:"#6c71c4",brightCyan:"#93a1a1",brightWhite:"#fdf6e3"}
+    };
+
+    /* Normalize addon globals — TypeScript UMD wraps class in a module object */
+    (function(){ for(const n of ["FitAddon","SearchAddon","Unicode11Addon"]){ const g=window[n]; if(g&&typeof g==="object"&&g[n]) window[n]=g[n]; } })();
+
+    function waitForFonts(){ if(fontsReady) return Promise.resolve(); return Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,1500))]).then(()=>{fontsReady=true;}); }
+    function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+    /* Auto-open a terminal as soon as the agent list arrives, so the dashboard
+       always shows a place to type instead of only the welcome screen. */
+    let autoStarted=false;
+    function autoStartTerminal(){
+      if(autoStarted||splitSlots.length>0) return;
+      autoStarted=true;
+      /* Prefer a zero-cost agent, so a fresh dashboard never auto-starts
+         something that immediately asks you to sign in or for a key. */
+      const free=agents.find(a=>a.active&&!a.requiresKey);
+      const first=free||agents.find(a=>a.active);
+      if(first){
+        selectAgent(first.id);
+        showNotification(free?`Terminal ready: ${first.name}`:`Only credential-based CLIs found - starting ${first.name} (it may ask you to sign in).`,free?"success":"info");
+      } else {
+        showNotification(`None of the ${agents.length} known CLIs are installed - install opencode / freebuff / openclaude, then hit Rescan.`,"error");
+      }
+    }
+
+
+    /* ── Init ──────────────────────────────────────────────────────── */
+    function init(){
+      connectWebSocket();
+      fetch("/api/about").then(r=>r.json()).then(d=>{ window._aboutData=d; updateAbout(d); });
+      fetchGitBranch();
+      setTheme(savedTheme);
+      updateSplitCount();
+      document.getElementById("handoffBtn").onclick=contextHandoff;
+      document.getElementById("restartBtn").onclick=()=>{ if(activeAgentId) restartAgent(activeAgentId); };
+      document.getElementById("stopBtn").onclick=()=>{ if(activeAgentId) killAgent(activeAgentId); };
+      document.getElementById("rescanBtn").onclick=rescan;
+      document.getElementById("addAgentBtn").onclick=()=>openModal("modal");
+      document.getElementById("themeToggle").onclick=cycleTheme;
+      document.getElementById("aboutBtn").onclick=openAbout;
+      document.getElementById("agent-search-input").addEventListener("input",renderAgentCards);
+      document.getElementById("cmdInput").addEventListener("input",e=>{ renderCmdList(e.target.value); });
+    }
+
+    /* ── WebSocket ─────────────────────────────────────────────────── */
+    function connectWebSocket(){
+      const proto=location.protocol==="https:"?"wss:":"ws:";
+      ws=new WebSocket(`${proto}//${location.host}`); ws.binaryType="arraybuffer";
+      ws.onopen=()=>{ setConnectionStatus("CONNECTED"); if(window._aboutData) updateAbout(window._aboutData); };
+      ws.onmessage=(e)=>{
+        if(e.data instanceof ArrayBuffer){
+          const view=new Uint8Array(e.data); if(view.length<2) return;
+          const idLen=view[0];
+          const agentId=utf8Decoder.decode(view.slice(1,1+idLen));
+          const textData=utf8Decoder.decode(view.slice(1+idLen));
+          if(!agentScrollback[agentId]) agentScrollback[agentId]="";
+          agentScrollback[agentId]+=textData;
+          if(agentScrollback[agentId].length>60000) agentScrollback[agentId]=agentScrollback[agentId].slice(-50000);
+          for(const slot of splitSlots){ if(slot.agentId===agentId && slot.term) slot.term.write(textData); }
+          return;
+        }
+        try{ handleMessage(JSON.parse(e.data)); }catch{}
+      };
+      ws.onclose=()=>{ setConnectionStatus("DISCONNECTED"); setTimeout(connectWebSocket,2000); };
+      ws.onerror=()=>{};
+    }
+
+    function send(msg){ if(ws && ws.readyState===WebSocket.OPEN) ws.send(JSON.stringify(msg)); }
+
+    function setConnectionStatus(s){
+      connectionStatus=s;
+      const dot=document.getElementById("connDot"); const txt=document.getElementById("connText");
+      if(!dot||!txt) return;
+      txt.textContent=s; dot.className="conn-dot";
+      if(s==="CONNECTED") dot.classList.add("connected");
+      else if(s==="DISCONNECTED") dot.classList.add("disconnected");
+    }
+
+    function handleMessage(msg){
+      switch(msg.type){
+        case "connected": setConnectionStatus("CONNECTED"); break;
+        case "rescan_result":
+          agents=msg.agents; renderAgentCards();
+          if(msg.workspaceDir) setWorkspace(msg.workspaceDir);
+          fetchGitBranch(); updateStats();
+          autoStartTerminal();
+          break;
+        case "session_status":
+          sessionStatuses[msg.agentId]={status:msg.status,pid:msg.pid,crashCount:msg.crashCount||0};
+          renderAgentCards(); break;
+        case "rate_limit_warning": showRateLimitWarning(msg.agentName||msg.agentId); break;
+        case "session_killed":
+          delete sessionStatuses[msg.agentId]; renderAgentCards();
+          /* Tell the user why the pane went quiet - and that typing revives it. */
+          for(const slot of splitSlots){
+            if(slot.agentId===msg.agentId && slot.term){
+              try{ slot.term.writeln(`\r\n\x1b[31m[${msg.agentId} stopped${msg.exitCode!==undefined?` (exit ${msg.exitCode})`:""} - type or click the agent to restart]\x1b[0m`); }catch{}
+            }
+          }
+          showNotification(`${msg.agentId} stopped`,"error"); break;
+        case "custom_agent_added": agents.push(msg.agent); renderAgentCards(); closeModal("modal"); showNotification("Custom agent added","success"); break;
+        case "custom_agent_error":
+          const errEl=document.getElementById("customError");
+          if(errEl){ errEl.textContent=msg.message; errEl.classList.remove("hidden"); }
+          break;
+        case "session_error":
+          showNotification(`Could not start ${msg.agentId||"agent"}: ${msg.message||"unknown error"}`,"error"); break;
+        case "terminal_data":
+          /* Fallback transport used by the server for very long agent ids. */
+          if(msg.agentId){
+            if(!agentScrollback[msg.agentId]) agentScrollback[msg.agentId]="";
+            agentScrollback[msg.agentId]+=(msg.data||"");
+            for(const slot of splitSlots){ if(slot.agentId===msg.agentId && slot.term) slot.term.write(msg.data||""); }
+          }
+          break;
+        case "context_handoff_result":
+          showNotification(msg.success?"Context sent to terminal":msg.message,msg.success?"success":"error"); break;
+        case "server_shutdown": document.getElementById("shutdownOverlay").classList.remove("hidden"); break;
+        case "workspace_changed": setWorkspace(msg.workspaceDir); fetchGitBranch(); break;
+        case "config_saved": closeConfig(); showNotification("Config saved","success"); break;
+        case "notification":
+          if("Notification" in window && Notification.permission==="granted") new Notification(msg.title,{body:msg.body});
+          showNotification(msg.title,"info"); break;
+      }
+    }
+
+    /* ── Agent Rendering ───────────────────────────────────────────── */
+    function renderAgentCards(){
+      const container=document.getElementById("agentList");
+      const active=agents.filter(a=>a.active).length;
+      const countEl=document.getElementById("agentCount");
+      if(countEl) countEl.textContent=`${active} of ${agents.length} available`;
+      updateStats();
+      if(!agents.length){ container.innerHTML='<div style="text-align:center;color:var(--muted);font-size:11px;padding:40px 0">No agents found</div>'; return; }
+      const q=(document.getElementById("agent-search-input")?.value||"").toLowerCase();
+      const groups={};
+      for(const a of agents){ const g=a.group||"Other"; if(!groups[g]) groups[g]=[]; groups[g].push(a); }
+      let html="";
+      for(const [grp,list] of Object.entries(groups)){
+        const visible=list.filter(a=>a.name.toLowerCase().includes(q)||a.binary.toLowerCase().includes(q)||a.tag.toLowerCase().includes(q));
+        if(!visible.length) continue;
+        const collapsed=collapsedGroups.has(grp);
+        html+=`<div class="group-header" onclick="toggleGroup('${esc(grp).replace(/'/g,"\\'")}')"><span class="group-chevron ${collapsed?'collapsed':''}">▼</span><span>${esc(grp)}</span><span style="font-size:9px;margin-left:auto;opacity:.45">${visible.filter(a=>a.active).length}/${visible.length}</span></div>`;
+        if(collapsed) continue;
+        for(const a of visible){
+          const isActive=splitSlots.some(s=>s.agentId===a.id);
+          const s=sessionStatuses[a.id]; const pid=s?s.pid:""; const cc=s?.crashCount||0; const st=s?.status||"OFFLINE";
+          let dotClass="offline";
+          if(st==="READY"||st==="STARTING") dotClass="online";
+          else if(st==="BUSY"||st==="CONNECTED") dotClass="busy";
+          const onOff=a.active&&dotClass!=="offline";
+          const dot=`<div class="status-dot ${onOff?dotClass:'offline'}" style="${onOff?`box-shadow:0 0 6px ${a.tagColor};`:''}" title="${st}"></div>`;
+          html+=`<div class="agent-card ${isActive?'active':''}" data-agent-id="${a.id}" style="--accent:${a.tagColor};" onclick="selectAgent('${a.id}')" ondblclick="openConfigModal('${a.id}')">
+            <div style="display:flex;align-items:center;gap:5px;min-width:0;flex:1">
+              ${dot}<span class="agent-name" style="color:${a.tagColor}">${esc(a.name)}</span>
+              <span class="tag-badge" style="background:${a.tagColor}18;color:${a.tagColor};border-color:${a.tagColor}30;">${esc(a.tag)}</span>
+              <span class="agent-binary">${esc(a.binary)}</span>
+              ${cc>0?`<span class="crash-count">✗${cc}</span>`:''}
+            </div>${pid?`<span style="font-size:9px;color:var(--muted)">PID ${pid}</span>`:''}</div>`;
+        }
+      }
+      container.innerHTML=html;
+    }
+
+    function toggleGroup(grp){ if(collapsedGroups.has(grp)) collapsedGroups.delete(grp); else collapsedGroups.add(grp); renderAgentCards(); }
+
+    /* Agent Search */
+    function filterAgentList(agents, query) {
+      if (!query) return agents;
+      const q = query.toLowerCase();
+      return agents.filter(a =>
+        a.name.toLowerCase().includes(q) ||
+        a.id.toLowerCase().includes(q) ||
+        a.tag.toLowerCase().includes(q)
+      );
+    }
+
+    /* Keyboard Shortcuts */
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + K: Focus search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.getElementById('agentSearch');
+        if (searchInput) searchInput.focus();
+      }
+      // Ctrl/Cmd + R: Rescan
+      if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+        e.preventDefault();
+        rescan();
+      }
+      // Escape: Clear search
+      if (e.key === 'Escape') {
+        const searchInput = document.getElementById('agentSearch');
+        if (searchInput && document.activeElement === searchInput) {
+          searchInput.value = '';
+          renderAgentCards();
+        }
+      }
+    });
+
+    /* Terminal Management */
+
+    /* ── Terminal Management ──────────────────────────────────────── */
+    function selectAgent(agentId){
+      const agent=agents.find(a=>a.id===agentId);
+      if(!agent) return;
+      if(!agent.active){
+        showNotification(`${agent.name} is not installed (${agent.binary} not found) \u2014 install it or register it via "+ Add Custom CLI", then rescan.`,"error");
+        return;
+      }
+      if(agent.requiresKey&&!warnedKeyAgents.has(agentId)){
+        warnedKeyAgents.add(agentId);
+        showNotification(`${agent.name} is not a zero-cost CLI - it may ask you to sign in or paste an API key.`,"info");
+      }
+      const slot=ensureSlot(agentId,agent);
+      if(!slot) return;
+      setActiveSlotByAgent(agentId);
+      send({type:"switch_agent",agentId:agentId});
+      document.getElementById("welcomeScreen").classList.add("hidden");
+      if(slot.term){
+        try{ slot.fitAddon.fit(); }catch{}
+        try{ slot.term.focus(); }catch{}
+      }
+    }
+
+    function ensureSlot(agentId,agent){
+      let slot=splitSlots.find(s=>s.agentId===agentId);
+      if(slot){ activeSlotIdx=splitSlots.indexOf(slot); return slot; }
+      if(splitSlots.length>=4){ showNotification("Close a pane first (max 4)","error"); return null; }
+      try{ slot=createPaneEl(agentId,agent); }
+      catch(err){ showNotification("Failed to open terminal: "+((err&&err.message)||err),"error"); return null; }
+      splitSlots.push(slot); activeSlotIdx=splitSlots.length-1;
+      applySplitLayout(); updateSplitCount(); updateActivePill();
+      return slot;
+    }
+
+    function createPaneEl(agentId,agent){
+      const paneId=`pane-${Date.now()}`;
+      const pane=document.createElement("div"); pane.className="terminal-pane"; pane.id=paneId; pane.dataset.agentId=agentId;
+      pane.innerHTML=`<div class="pane-header"><div style="display:flex;align-items:center;gap:4px"><span class="pane-title">${esc(agent.name)}</span><span class="tag-badge pane-tag" style="background:${agent.tagColor}18;color:${agent.tagColor};border-color:${agent.tagColor}30;">${esc(agent.tag)}</span></div><div class="pane-actions"><button class="pane-btn" onclick="restartAgent('${agentId}')" title="Restart">↻</button><button class="pane-btn" onclick="killAgent('${agentId}')" title="Kill">✕</button></div></div><div class="terminal-container" id="term-${paneId}"></div>`;
+      document.getElementById("splitRoot").appendChild(pane);
+      const container=document.getElementById(`term-${paneId}`);
+      let term,fitAddon,searchAddon;
+      try{
+        /* allowProposedApi is REQUIRED by the Unicode11 addon. Without it
+           term.loadAddon(new Unicode11Addon()) throws
+           "You must set the allowProposedApi option to true to use proposed API"
+           *after* the pane was appended, which left an empty pane on screen and
+           no terminal at all (the error was swallowed by ensureSlot's catch). */
+        term=new Terminal({ theme:THEMES[currentTheme], fontFamily:"'JetBrains Mono',Consolas,Monaco,'Courier New',monospace", fontSize:13, lineHeight:1.2, cursorStyle:"block", cursorBlink:true, scrollback:500, convertEol:false, allowProposedApi:true });
+        fitAddon=new FitAddon(); const unicodeAddon=new Unicode11Addon(); searchAddon=new SearchAddon();
+        term.loadAddon(fitAddon);
+        term.loadAddon(unicodeAddon);
+        /* Activate the Unicode 11 width tables (box drawing / emoji widths).
+           Guarded so an addon/core version mismatch can never kill the pane. */
+        try{ term.unicode.activeVersion="11"; }catch{}
+        term.loadAddon(searchAddon);
+        term.open(container);
+      }catch(err){
+        /* Never leave a half-built pane behind - remove it and report clearly. */
+        try{ term&&term.dispose(); }catch{}
+        pane.remove();
+        console.error(`[APEX] terminal init failed for "${agentId}" (${agent.binary}):`,err);
+        throw err;
+      }
+      /* Never push a degenerate size at the CLI: the first fit() runs before the
+         pane has been laid out, which used to resize the PTY to a few columns
+         and make TUI agents (opencode/Bun) panic and exit immediately. */
+      let lastCols=0,lastRows=0;
+      const doFit=()=>{
+        try{ fitAddon.fit(); }catch{}
+        const cols=term.cols,rows=term.rows;
+        if(cols<20||rows<5) return;           // pane not laid out yet - keep PTY default
+        if(cols===lastCols&&rows===lastRows) return;
+        lastCols=cols; lastRows=rows;
+        send({type:"resize",agentId:agentId,cols,rows});
+      };
+      setTimeout(doFit,50);
+      waitForFonts().then(()=>doFit());
+      const ro=new ResizeObserver(()=>doFit()); ro.observe(pane);
+      term.onData(d=>send({type:"input",agentId:agentId,data:d}));
+      return { id:paneId, agentId, agent, term, fitAddon, searchAddon, el:pane, container, ro };
+    }
+
+    function setActiveSlotByAgent(agentId){
+      const idx=splitSlots.findIndex(s=>s.agentId===agentId);
+      if(idx>=0){ activeSlotIdx=idx; activeAgentId=agentId; updateActivePill(); }
+    }
+
+    function splitView(direction){
+      if(splitSlots.length>=4){ showNotification("Maximum 4 panes","error"); return; }
+      if(!activeAgentId){ showNotification("Select an agent first","error"); return; }
+      const agent=agents.find(a=>a.id===activeAgentId); if(!agent) return;
+      const slot=createPaneEl(activeAgentId,agent);
+      splitSlots.push(slot); activeSlotIdx=splitSlots.length-1;
+      applySplitLayout(); updateSplitCount(); updateActivePill();
+      showNotification("Split created","info");
+    }
+
+    function closeSplit(){
+      if(splitSlots.length<=1) return;
+      // Defensive: ensure activeSlotIdx is within bounds
+      if(activeSlotIdx<0||activeSlotIdx>=splitSlots.length) activeSlotIdx=splitSlots.length-1;
+      const slot=splitSlots.splice(activeSlotIdx,1)[0];
+      if(slot){ slot.el.remove(); slot.ro.disconnect(); slot.term.dispose(); }
+      if(activeSlotIdx>=splitSlots.length) activeSlotIdx=splitSlots.length-1;
+      applySplitLayout(); updateSplitCount(); updateActivePill();
+    }
+
+    function applySplitLayout(){
+      const root=document.getElementById("splitRoot");
+      root.className="split-root"; root.style.display=""; root.style.flexDirection=""; root.style.gridTemplateColumns=""; root.style.gridTemplateRows="";
+      const welcome=document.getElementById("welcomeScreen");
+      if(welcome&&splitSlots.length>0) welcome.classList.add("hidden");
+      if(splitSlots.length<=1) return;
+      if(splitSlots.length<=2){ root.style.display="flex"; root.style.flexDirection="row"; }
+      else { root.classList.add("grid2x2"); }
+    }
+
+    function updateSplitCount(){ const el=document.getElementById("splitCount"); if(el) el.textContent=`${splitSlots.length} ${splitSlots.length===1?'pane':'panes'}`; }
+    function updateActivePill(){
+      const pill=document.getElementById("activePill"); if(!pill) return;
+      if(!activeAgentId||splitSlots.length===0){ pill.classList.add("hidden"); return; }
+      const agent=agents.find(a=>a.id===activeAgentId);
+      if(agent){ pill.textContent=`${agent.name} (${agent.tag})`; pill.classList.remove("hidden"); }
+    }
+
+    /* ── Session Actions ──────────────────────────────────────────── */
+    function killAgent(agentId){
+      send({type:"kill_session",agentId:agentId});
+      for(const s of splitSlots){ if(s.agentId===agentId && s.term) s.term.writeln("\r\n\x1b[31m[Session killed]\x1b[0m"); }
+      showNotification(`${agentId} stopped`,"error");
+    }
+
+    function restartAgent(agentId){
+      send({type:"restart_session",agentId:agentId});
+      showNotification(`${agentId} restarting…`,"info");
+    }
+
+    function exportActiveLog(){ if(!activeAgentId) return; window.open(`/api/export/${activeAgentId}`,"_blank"); }
+    function contextHandoff(){ if(!activeAgentId){ showNotification("Select an agent first","error"); return; } send({type:"context_handoff",agentId:activeAgentId}); }
+    function rescan(){ send({type:"rescan"}); showNotification("Rescanning…","info"); }
+
+    /* ── Workspace & Git ──────────────────────────────────────────── */
+    function setWorkspace(dir){
+      for(const el of [document.getElementById("targetDir"),document.getElementById("targetDirFooter")]){
+        if(el){ el.textContent=dir; el.classList.remove("hidden"); }
+      }
+    }
+    function fetchGitBranch(){
+      fetch("/api/git-branch").then(r=>r.json()).then(d=>{
+        for(const [elId,cls] of [["gitBranch","git-branch"],["gitBranchFooter",""]]){
+          const el=document.getElementById(elId); if(!el) continue;
+          if(d.branch){ el.textContent=`${cls?"git: ":""}${d.branch}`; el.classList.remove("hidden"); } else el.classList.add("hidden");
+        }
+      }).catch(()=>{});
+    }
+    function saveWorkspace(){
+      const dir=document.getElementById("workspaceInput").value; if(!dir) return;
+      fetch("/api/workspace",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({dir})})
+        .then(r=>r.json()).then(()=>{ closeModal("workspaceModal"); showNotification("Workspace changed","success"); })
+        .catch(()=>showNotification("Failed to change workspace","error"));
+    }
+
+    /* ── About ────────────────────────────────────────────────────── */
+    function updateAbout(d){
+      window._aboutData=d;
+      for(const [id,val] of Object.entries({
+        aboutVersion:`${d.name} v${d.version}`,aboutAuthor:d.author||"",aboutPlatform:d.platform||"",
+        aboutNode:d.nodeVersion||"",aboutAgents:`${d.agentsActive||0}/${d.agentsTotal||0} active`,
+        aboutSessions:d.sessionsActive||0,aboutWorkspace:d.workspaceDir||"",aboutDataDir:d.dataDir||""
+      })){ const el=document.getElementById(id); if(el) el.textContent=val; }
+    }
+    function openAbout(){ fetch("/api/about").then(r=>r.json()).then(d=>updateAbout(d)); document.getElementById("aboutModal").classList.remove("hidden"); }
+
+    /* ── Stats ────────────────────────────────────────────────────── */
+    function updateStats(){
+      const active=agents.filter(a=>a.active).length;
+      const countEl=document.getElementById("agentCount");
+      if(countEl) countEl.textContent=`${active} of ${agents.length} available`;
+    }
+    function showRateLimitWarning(agentName){
+      const banner=document.getElementById("rateLimitBanner"); const text=document.getElementById("rateLimitText");
+      if(banner&&text){ text.textContent=`Rate limit: ${agentName}. Switching recommended.`; banner.classList.remove("hidden"); setTimeout(()=>banner.classList.add("hidden"),10000); }
+      showNotification(`Rate limit: ${agentName}`,"error");
+    }
+
+    /* ── Modals & Dialogs ─────────────────────────────────────────── */
+    function closeModal(modalId){ const m=document.getElementById(modalId); if(m) m.classList.add("hidden"); const errEl=document.getElementById("customError"); if(errEl) errEl.classList.add("hidden"); }
+    function closeConfig(){ closeModal("configModal"); }
+    function openModal(modalId){ const m=document.getElementById(modalId); if(m) m.classList.remove("hidden"); }
+    function openCommandPalette(){
+      const palette=document.getElementById("cmdPalette"); if(palette) palette.classList.remove("hidden");
+      const input=document.getElementById("cmdInput"); if(input){ input.value=""; input.focus(); renderCmdList(""); }
+    }
+    function openSearch(){
+      const bar=document.getElementById("searchBar"); if(bar) bar.classList.remove("hidden");
+      const input=document.getElementById("searchInput"); if(input){ input.value=""; input.focus(); }
+      const slot=splitSlots[activeSlotIdx];
+      if(slot&&slot.searchAddon){ slot.searchAddon.clearHighlights(); updateSearchCount(); }
+    }
+    function findNext(){ const slot=splitSlots[activeSlotIdx]; const input=document.getElementById("searchInput"); if(!slot||!slot.searchAddon||!input||!input.value) return; slot.searchAddon.findNext(input.value,{activate:true,incremental:true}); updateSearchCount(); }
+    function findPrev(){ const slot=splitSlots[activeSlotIdx]; const input=document.getElementById("searchInput"); if(!slot||!slot.searchAddon||!input||!input.value) return; slot.searchAddon.findPrevious(input.value,{activate:true,incremental:true}); updateSearchCount(); }
+    function updateSearchCount(){
+      const slot=splitSlots[activeSlotIdx]; const el=document.getElementById("searchCount");
+      if(!slot||!slot.searchAddon||!el) return;
+      el.textContent=`Searching in ${slot.agentId}`;
+    }
+    function cycleTheme(){ const themes=["dark","light","solarized"]; const idx=themes.indexOf(currentTheme); setTheme(themes[(idx+1)%themes.length]); }
+    function setTheme(theme){
+      currentTheme=theme; document.body.setAttribute("data-theme",theme); localStorage.setItem("switchyard-theme",theme);
+      applyThemeToTerminals();
+    }
+    function applyThemeToTerminals(){ const t=THEMES[currentTheme]; for(const s of splitSlots){ if(s.term) s.term.options.theme=t; } }
+
+    /* ── Config ───────────────────────────────────────────────────── */
+    function openConfigModal(agentId){
+      const agent=agents.find(a=>a.id===agentId); if(!agent) return;
+      document.getElementById("configTitle").textContent=agent.binary;
+      document.getElementById("cfgBinary").value=agent.binary;
+      document.getElementById("cfgArgs").value=(agent.args||[]).join(" ");
+      document.getElementById("cfgGroup").value=agent.group||"Other";
+      fetch(`/api/config/${agentId}`).then(r=>r.json()).then(cfg=>{
+        document.getElementById("cfgCwd").value=cfg.cwd||"";
+        document.getElementById("cfgEnv").value=Object.entries(cfg.env||{}).map(([k,v])=>`${k}=${v}`).join("\n");
+        document.getElementById("cfgAutoRestart").checked=!!cfg.autoRestart;
+      });
+      document.getElementById("configModal").dataset.agentId=agentId;
+      document.getElementById("configModal").classList.remove("hidden");
+    }
+    function saveConfig(){
+      const modal=document.getElementById("configModal"); const agentId=modal?.dataset?.agentId; if(!agentId) return;
+      const argsStr=document.getElementById("cfgArgs").value;
+      const args=argsStr?argsStr.split(/\s+/).filter(Boolean):[];
+      const envLines=document.getElementById("cfgEnv").value.split("\n").filter(l=>l.trim());
+      const env={}; for(const line of envLines){ const m=line.match(/^([^=]+)=(.*)$/); if(m) env[m[1].trim()]=m[2]; }
+      const config={ args, env, cwd:document.getElementById("cfgCwd").value, group:document.getElementById("cfgGroup").value, autoRestart:document.getElementById("cfgAutoRestart").checked };
+      send({type:"save_agent_config",agentId:agentId,config:config});
+      closeConfig(); showNotification("Config saved","success");
+    }
+
+    /* ── Notifications ────────────────────────────────────────────── */
+    function showNotification(msg,type){
+      const colors={success:"toast-success",error:"toast-error",info:"toast-info"};
+      const el=document.createElement("div"); el.className=`toast ${colors[type]||colors.info}`; el.textContent=msg;
+      document.getElementById("toastContainer").appendChild(el);
+      /* Errors stay on screen longer - a 3s toast is too easy to miss when a
+         terminal fails to open. */
+      setTimeout(()=>el.remove(),type==="error"?9000:3000);
+    }
+
+    /* ── Keyboard Shortcuts ───────────────────────────────────────── */
+    document.addEventListener("keydown",(e)=>{
+      /* xterm captures keys in a hidden <textarea>; shortcuts must still work
+         there, otherwise Ctrl+1..8 / Ctrl+K / Ctrl+W die while typing. */
+      const tgt=e.target;
+      const inXterm=!!(tgt&&tgt.classList&&tgt.classList.contains("xterm-helper-textarea"));
+      if(!inXterm&&tgt&&(tgt.tagName==="INPUT"||tgt.tagName==="TEXTAREA")) return;
+      if(e.ctrlKey&&!e.shiftKey&&!e.altKey){
+        const n=parseInt(e.key); if(n>=1&&n<=8&&agents.length){ e.preventDefault(); const a=agents[n-1]; if(a&&a.active) selectAgent(a.id); return; }
+        if(e.key==="k"){ e.preventDefault(); openCommandPalette(); return; }
+        if(e.key==="f"){ e.preventDefault(); openSearch(); return; }
+        if(e.key==="w"){ e.preventDefault(); closeSplit(); return; }
+        if(e.key==="h"){ e.preventDefault(); contextHandoff(); return; }
+        if(e.key==="r"){ e.preventDefault(); rescan(); return; }
+      }
+      if(e.key==="Escape"){ closeModal("cmdPalette"); closeModal("searchBar"); closeModal("modal"); closeModal("workspaceModal"); closeModal("configModal"); closeModal("aboutModal"); document.getElementById("sidebarOverlay")?.classList.add("hidden"); return; }
+    });
+
+    /* ── Custom Agent ─────────────────────────────────────────────── */
+    function addCustomAgent(){
+      const id=document.getElementById("customId").value; const name=document.getElementById("customName").value;
+      const binary=document.getElementById("customBinary").value; const argsStr=document.getElementById("customArgs").value;
+      const args=argsStr?argsStr.split(/\s+/).filter(Boolean):[]; const group=document.getElementById("customGroup").value||"Custom";
+      if(!id||!name||!binary){ showNotification("ID, name, and binary are required","error"); return; }
+      send({type:"add_custom_agent",agentId:id,name:name,binary:binary,args:args,group:group});
+    }
+
+    /* ── Commands ─────────────────────────────────────────────────── */
+    const COMMANDS=[
+      {id:"handoff",name:"Context Handoff",hint:"Ctrl+H",action:contextHandoff},
+      {id:"rescan",name:"Rescan Agents",hint:"Ctrl+R",action:rescan},
+      {id:"add-agent",name:"Add Custom Agent",hint:"",action:()=>openModal("modal")},
+      {id:"workspace",name:"Change Workspace",hint:"",action:()=>openModal("workspaceModal")},
+      {id:"about",name:"About",hint:"",action:openAbout},
+      {id:"export",name:"Export Active Log",hint:"",action:exportActiveLog},
+      {id:"theme",name:"Cycle Theme",hint:"",action:cycleTheme},
+      {id:"shutdown",name:"Shutdown Server",hint:"",action:()=>{ fetch("/api/shutdown",{method:"POST"}); }}
+    ];
+
+    function renderCmdList(q){
+      const list=document.getElementById("cmdList"); if(!list) return;
+      const filtered=COMMANDS.filter(c=>c.name.toLowerCase().includes(q.toLowerCase()));
+      if(!filtered.length){ list.innerHTML='<div style="padding:6px 8px;font-size:11px;color:var(--muted)">No commands found</div>'; return; }
+      list.innerHTML=filtered.map(c=>`<li class="cmd-item" onclick="runCommand('${c.id}')"><span class="cmd-name">${c.name}</span><span class="cmd-hint">${c.hint}</span></li>`).join("");
+    }
+
+    function runCommand(id){ const cmd=COMMANDS.find(c=>c.id===id); if(cmd){ cmd.action(); closeModal("cmdPalette"); } }
+
+    /* ── Bootstrap ────────────────────────────────────────────────── */
+    document.addEventListener("DOMContentLoaded",init);
+  </script>
+</body>
+</html>
